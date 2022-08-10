@@ -1,7 +1,6 @@
 package me.coconan.agileaccount;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,29 +8,30 @@ import java.util.List;
 import java.util.Map;
 
 public class Account {
-    private Map<String, List<Asset>> assets = new HashMap<>();
+    private Map<Fund, List<Operation>> assets = new HashMap<>();
 
-    public void addAsset(Asset asset) {
-        List<Asset> assetBucket = assets.get(asset.getFund().getCode());
-        if (assetBucket == null) {
-            assetBucket = new ArrayList<>();
+    public void addOperation(Operation operation) {
+        List<Operation> operationList = assets.get(operation.getFund());
+        if (operationList == null) {
+            operationList = new ArrayList<>();
         }
-        assetBucket.add(asset);
-       assets.put(asset.getFund().getCode(), assetBucket);
+        operationList.add(operation);
+       assets.put(operation.getFund(), operationList);
     }
 
-    public Asset getAsset(String code) {
-        List<Asset> assetBucket = assets.get(code);
-        BigDecimal totalShare = calculateTotalShare(assetBucket);
-        BigDecimal totalCost = calculateTotalCost(assetBucket);
-        BigDecimal costPrice = totalCost.divide(totalShare, 5, RoundingMode.HALF_UP);
-        return new Asset(assetBucket.get(0).getFund(), totalShare.toString(), costPrice.toString(), "coconan");
+    public Asset getAsset(Fund fund) {
+        List<Operation> operationList = assets.get(fund);
+        Asset asset = new Asset(fund, "coconan");
+        for (Operation operation : operationList) {
+            asset.apply(operation);
+        }
+        return asset;
     }
 
     public Collection<Asset> getAssets() {
         Collection<Asset> assetCollection = new ArrayList<>();
-        for (String code : assets.keySet()) {
-            assetCollection.add(getAsset(code));
+        for (Fund fund : assets.keySet()) {
+            assetCollection.add(getAsset(fund));
         }
         return assetCollection;
     }
@@ -58,13 +58,5 @@ public class Account {
             totalCost = totalCost.add(asset.getCost());
         }
         return totalCost;       
-    }
-
-    private BigDecimal calculateTotalShare(Collection<Asset> assets) {
-        BigDecimal totalShare = new BigDecimal(0);
-        for (Asset asset : assets) {
-            totalShare = totalShare.add(asset.getShare());
-        }
-        return totalShare;
     }
 }

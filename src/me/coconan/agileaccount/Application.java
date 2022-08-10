@@ -12,8 +12,10 @@ public class Application {
     
     public static void main(String[] args) {
         Path assetsPath = Paths.get(args[0]);
-        Path fundsPath = Paths.get(args[1]);
+        Path operationsPath = Paths.get(args[1]);
+        Path fundsPath = Paths.get(args[2]);
         try (FileReader assetsFileReader = new FileReader(assetsPath.toFile());
+            FileReader operationsFileReader = new FileReader(operationsPath.toFile());
             FileReader fundsFileReader = new FileReader(fundsPath.toFile())) {
             FundStore fundStore = new FundStore();
             try (BufferedReader reader = new BufferedReader(fundsFileReader)) {
@@ -28,14 +30,14 @@ public class Application {
             }
 
             Account account = new Account();
-            try (BufferedReader reader = new BufferedReader(assetsFileReader)) {
+            try (BufferedReader reader = new BufferedReader(operationsFileReader)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] fields = line.split("\\s+");
-                    if (fields.length != 4) {
+                    if (fields.length != 8) {
                         continue;
                     }
-                    account.addAsset(new Asset(fundStore.get(fields[0].trim()), fields[1].trim(), fields[2].trim(), fields[3].trim()));
+                    account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
                 }
             }
 
