@@ -28,7 +28,7 @@ public class Asset {
                 .add(operation.getNetUnitValue().multiply(operation.getShare()))
                 .divide(updatedShare,  5, RoundingMode.HALF_UP);
         } else {
-            BigDecimal earning = operation.getNetUnitValue().subtract(costPrice).multiply(operation.getShare());
+            BigDecimal earning = operation.getNetUnitValue().subtract(costPrice).multiply(operation.getShare().negate());
             fixedEarning = fixedEarning.add(earning);
         }
         share = updatedShare;

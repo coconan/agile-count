@@ -41,6 +41,7 @@ public class Application {
                 }
             }
 
+            System.out.printf("%6s %10s %10s %10s %16s%% %10s %16s %s\n", "code", "cost", "amount", "earning", "earning rate", "cost price", "fixed earning", "name");
             for (Asset asset : account.getAssets()) {
                 String code = asset.getFund().getCode();
                 String name = asset.getFund().getName();
@@ -49,13 +50,14 @@ public class Application {
                 BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_UP);
                 BigDecimal earningRate = earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_DOWN);
-                System.out.printf("%6s %10s %10s %10s %10s%% %10s %s\n", code, cost, amount, earning, earningRate, costPrice, name);
+                BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
+                System.out.printf("%6s %10s %10s %10s %16s%% %10s %16s %s\n", code, cost, amount, earning, earningRate, costPrice, fixedEarning, name);
             }
             BigDecimal totalCost = account.getTotalCost().setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal totalAmount = account.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal totalEarning = totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).setScale(2, RoundingMode.HALF_DOWN);
-            System.out.printf("%6s %10s %10s %10s %10s%% %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, " ");
+            System.out.printf("%6s %10s %10s %10s %16s%% %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, " ");
         } catch (IOException e) {
             e.printStackTrace();
         }
