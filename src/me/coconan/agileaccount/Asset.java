@@ -22,7 +22,6 @@ public class Asset {
 
     public void apply(Operation operation) {
         BigDecimal updatedShare = share.add(operation.getShare());
-        share = updatedShare;
         serviceFee = serviceFee.add(operation.getServiceFee());
         if (operation.getShare().compareTo(BigDecimal.valueOf(0)) > 0) {
             costPrice = costPrice.multiply(share)
@@ -32,6 +31,7 @@ public class Asset {
             BigDecimal earning = operation.getNetUnitValue().subtract(costPrice).multiply(operation.getShare());
             fixedEarning = fixedEarning.add(earning);
         }
+        share = updatedShare;
     }
 
     public Fund getFund() {
@@ -63,6 +63,6 @@ public class Asset {
     }
 
     public BigDecimal getCost() {
-        return share.multiply(costPrice);
+        return share.multiply(costPrice).add(serviceFee);
     }
 }
