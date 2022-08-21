@@ -37,11 +37,11 @@ public class Application {
                     if (fields.length != 8) {
                         continue;
                     }
-                    account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
+                    account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
                 }
             }
 
-            System.out.printf("%6s %10s %10s %10s %16s%% %10s %16s %s\n", "code", "cost", "amount", "earning", "earning rate", "cost price", "fixed earning", "name");
+            System.out.printf("%6s %10s %10s %10s %16s%% %10s %10s %16s %s\n", "code", "cost", "amount", "earning", "earning rate", "cost price", "share", "fixed earning", "name");
             for (Asset asset : account.getAssets()) {
                 String code = asset.getFund().getCode();
                 String name = asset.getFund().getName();
@@ -50,8 +50,9 @@ public class Application {
                 BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_UP);
                 BigDecimal earningRate = earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_DOWN);
+                BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
-                System.out.printf("%6s %10s %10s %10s %16s%% %10s %16s %s\n", code, cost, amount, earning, earningRate, costPrice, fixedEarning, name);
+                System.out.printf("%6s %10s %10s %10s %16s%% %10s %10s %16s %s\n", code, cost, amount, earning, earningRate, costPrice, share, fixedEarning, name);
             }
             BigDecimal totalCost = account.getTotalCost().setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal totalAmount = account.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN);

@@ -4,13 +4,15 @@ import java.math.BigDecimal;
 
 public class Operation {
     private Fund fund;
+    private BigDecimal cost;
     private BigDecimal share;
     private BigDecimal netUnitValue;
     private BigDecimal serviceFee;
     private String platform;
     
-    public Operation(Fund fund, String share, String netUnitValue, String serviceFee, String platform) {
+    public Operation(Fund fund, String cost, String share, String netUnitValue, String serviceFee, String platform) {
         this.fund = fund;
+        this.cost = new BigDecimal(cost);
         this.share = new BigDecimal(share);
         this.netUnitValue = new BigDecimal(netUnitValue);
         this.serviceFee = new BigDecimal(serviceFee);
@@ -38,6 +40,6 @@ public class Operation {
     }
 
     public BigDecimal getCost() {
-        return share.multiply(getNetUnitValue()).add(serviceFee);
+        return cost;
     }
 }
