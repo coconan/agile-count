@@ -41,14 +41,17 @@ public class Application {
                 }
             }
 
-            System.out.printf("%6s %10s %10s %10s %16s%% %10s %10s %16s %s\n", "code", "cost", "amount", "earning", "earning rate", "cost price", "share", "fixed earning", "name");
+            System.out.printf("%6s %10s %10s %10s %16s%% %10s %10s %16s %s\n",
+                "code", "cost", "amount", "earning", "earning rate", "cost price", "share", "fixed earning", "name");
             for (Asset asset : account.getAssets()) {
                 String code = asset.getFund().getCode();
                 String name = asset.getFund().getName();
                 BigDecimal cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal amount = asset.getAmount().setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal earningRate = earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal earningRate = cost.compareTo(BigDecimal.valueOf(0)) == 0
+                    ? BigDecimal.valueOf(0)
+                    : earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_DOWN);
                 BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
                 BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
