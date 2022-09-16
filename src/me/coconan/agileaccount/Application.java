@@ -62,7 +62,7 @@ public class Application {
             BigDecimal totalCost = account.getTotalCost().setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal totalAmount = account.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal totalEarning = totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
-            BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
             System.out.printf("%6s %10s %10s %10s %16s%% %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, " ");
         } catch (IOException e) {
             e.printStackTrace();
