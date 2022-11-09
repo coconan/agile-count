@@ -38,6 +38,9 @@ public class Application {
                         if (fields.length != 8) {
                             continue;
                         }
+                        if (fundStore.get(fields[0].trim()) == null) {
+                            continue;
+                        }
                         account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
                     }
                 }
