@@ -44,11 +44,16 @@ public class Account {
         return calculateTotalCost(getAssets());
     }
 
+    public BigDecimal getTotalFixedEarning() {
+        return calculateTotalFixedEarning(getAssets());
+    }
+
     private BigDecimal calculateTotalAmount(Collection<Asset> assets) {
         BigDecimal totalAmount = new BigDecimal(0);
         for (Asset asset : assets) {
             totalAmount = totalAmount.add(asset.getAmount());
         }
+        
         return totalAmount;
     }
 
@@ -57,6 +62,16 @@ public class Account {
         for (Asset asset : assets) {
             totalCost = totalCost.add(asset.getCost());
         }
-        return totalCost;       
+        
+        return totalCost;
+    }
+
+    private BigDecimal calculateTotalFixedEarning(Collection<Asset> assets) {
+        BigDecimal totalFixedEarning = new BigDecimal(0);
+        for (Asset asset : assets) {
+            totalFixedEarning = totalFixedEarning.add(asset.getFixedEarning());
+        }
+        
+        return totalFixedEarning;
     }
 }
