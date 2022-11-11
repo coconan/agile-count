@@ -24,4 +24,8 @@ public class Fund {
     public BigDecimal getNetUnitValue() {
         return netUnitValue;
     }
+
+    public void setNetUnitValue(BigDecimal netUnitValue) {
+        this.netUnitValue = netUnitValue;
+    }
 }

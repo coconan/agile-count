@@ -3,6 +3,8 @@ package me.coconan.agileaccount;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +30,18 @@ public class Account {
         return asset;
     }
 
-    public Collection<Asset> getAssets() {
-        Collection<Asset> assetCollection = new ArrayList<>();
+    public List<Asset> getAssets() {
+        List<Asset> assetCollection = new ArrayList<>();
         for (Fund fund : assets.keySet()) {
             assetCollection.add(getAsset(fund));
         }
+        Collections.sort(assetCollection, new Comparator<Asset>() {
+            @Override
+            public int compare(Asset asset1, Asset asset2) {
+                return asset1.getFund().getCode().compareTo(asset2.getFund().getCode());
+            }
+        });
+        
         return assetCollection;
     }
 
