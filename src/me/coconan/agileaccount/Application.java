@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Map;
 
 public class Application {
     
@@ -41,7 +45,8 @@ public class Application {
                         if (fundStore.get(fields[0].trim()) == null) {
                             continue;
                         }
-                        account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
+                        account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[1].trim(), fields[2].trim(),
+                            fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
                     }
                 }
             }
@@ -69,9 +74,18 @@ public class Application {
             BigDecimal totalEarning = totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
             BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
             System.out.printf("%6s %10s %10s %10s %16s%% %16s %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, totalFixedEarning, " ");
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            Map<LocalDate, BigDecimal> investmentAmountByMonth = account.getInvestmentAmountByMonth();
+            BigDecimal accumulatedInvestment = BigDecimal.ZERO;
+            for (LocalDate date = account.getStartedDate(); date.isBefore(LocalDate.now()); date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+                BigDecimal investment = investmentAmountByMonth.get(date) == null ? BigDecimal.ZERO : investmentAmountByMonth.get(date);
+                accumulatedInvestment = accumulatedInvestment.add(investment);
+                System.out.printf("%s %16s %16s\n", dtf.format(date), investment.setScale(2, RoundingMode.HALF_DOWN),
+                    accumulatedInvestment.setScale(2, RoundingMode.HALF_DOWN));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
