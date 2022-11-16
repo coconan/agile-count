@@ -1,10 +1,14 @@
 package me.coconan.agileaccount;
 
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FundStore {
@@ -20,8 +24,9 @@ public class FundStore {
                     response.append(inputLine);
                 }
                 String netListJson = response.toString().split("Data_netWorthTrend = ")[1].split(";/\\*累计净值走势\\*/")[0];
-                String[] netListItemJsonArray = netListJson.split("\\}\\,\\{");
-                BigDecimal latestNetUnitValue = new BigDecimal(netListItemJsonArray[netListItemJsonArray.length-1].split("\\,")[1].split("\\:")[1]);
+                Gson gson = new Gson();
+                List<FundDailyRecord> fundDailyRecords = gson.fromJson(netListJson, new TypeToken<List<FundDailyRecord>>() {}.getType());
+                BigDecimal latestNetUnitValue = fundDailyRecords.get(fundDailyRecords.size()-2).getY();
                 fund.setNetUnitValue(latestNetUnitValue);
             }
         } catch (Exception e) {
