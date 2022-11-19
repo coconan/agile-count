@@ -1,3 +1,4 @@
+- integrate sqlite to cache funds data
 - package as a desktop application
 - get amount by day
 - draw asset change graph
