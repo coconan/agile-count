@@ -51,38 +51,40 @@ public class Application {
                 }
             }
 
-            System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n",
-                "code", "cost", "amount", "earning", "earning rate", "fixed earning", "net price", "cost price", "share", "name");
-            for (Asset asset : account.getAssets()) {
-                String code = asset.getFund().getCode();
-                String name = asset.getFund().getName();
-                BigDecimal netPrice = asset.getFund().getNetUnitValue().setScale(4, RoundingMode.HALF_DOWN);
-                BigDecimal cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
-                BigDecimal amount = asset.getAmount().setScale(2, RoundingMode.HALF_DOWN);
-                BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_DOWN);
-                BigDecimal earningRate = cost.compareTo(BigDecimal.valueOf(0)) == 0
-                    ? BigDecimal.valueOf(0)
-                    : earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
-                BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_UP);
-                BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
-                BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
-                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n", code, cost, amount, earning, earningRate, fixedEarning, netPrice, costPrice, share, name);
-            }
-            BigDecimal totalCost = account.getTotalCost().setScale(2, RoundingMode.HALF_DOWN);
-            BigDecimal totalAmount = account.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN);
-            BigDecimal totalFixedEarning = account.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
-            BigDecimal totalEarning = totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
-            BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
-            System.out.printf("%6s %10s %10s %10s %16s%% %16s %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, totalFixedEarning, " ");
-
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            Map<LocalDate, BigDecimal> investmentAmountByMonth = account.getInvestmentAmountByMonth();
-            BigDecimal accumulatedInvestment = BigDecimal.ZERO;
-            for (LocalDate date = account.getStartedDate(); date.isBefore(LocalDate.now()); date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
-                BigDecimal investment = investmentAmountByMonth.get(date) == null ? BigDecimal.ZERO : investmentAmountByMonth.get(date);
-                accumulatedInvestment = accumulatedInvestment.add(investment);
-                System.out.printf("%s %16s %16s\n", dtf.format(date), investment.setScale(2, RoundingMode.HALF_DOWN),
-                    accumulatedInvestment.setScale(2, RoundingMode.HALF_DOWN));
+            if ("asset".equals(args[3])) {
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n",
+                    "code", "cost", "amount", "earning", "earning rate", "fixed earning", "net price", "cost price", "share", "name");
+                for (Asset asset : account.getAssets()) {
+                    String code = asset.getFund().getCode();
+                    String name = asset.getFund().getName();
+                    BigDecimal netPrice = asset.getFund().getNetUnitValue().setScale(4, RoundingMode.HALF_DOWN);
+                    BigDecimal cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal amount = asset.getAmount().setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal earningRate = cost.compareTo(BigDecimal.valueOf(0)) == 0
+                        ? BigDecimal.valueOf(0)
+                        : earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_UP);
+                    BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
+                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n", code, cost, amount, earning, earningRate, fixedEarning, netPrice, costPrice, share, name);
+                }
+                BigDecimal totalCost = account.getTotalCost().setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal totalAmount = account.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal totalFixedEarning = account.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal totalEarning = totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal earningRate = totalEarning.divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %s\n", " ", totalCost, totalAmount, totalEarning, earningRate, totalFixedEarning, " ");
+            } else if ("chart".equals(args[3])) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Map<LocalDate, BigDecimal> investmentAmountByMonth = account.getInvestmentAmountByMonth();
+                BigDecimal accumulatedInvestment = BigDecimal.ZERO;
+                for (LocalDate date = account.getStartedDate(); date.isBefore(LocalDate.now()); date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+                    BigDecimal investment = investmentAmountByMonth.get(date) == null ? BigDecimal.ZERO : investmentAmountByMonth.get(date);
+                    accumulatedInvestment = accumulatedInvestment.add(investment);
+                    System.out.printf("%s %16s %16s\n", dtf.format(date), investment.setScale(2, RoundingMode.HALF_DOWN),
+                        accumulatedInvestment.setScale(2, RoundingMode.HALF_DOWN));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
