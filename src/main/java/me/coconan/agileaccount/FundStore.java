@@ -26,7 +26,7 @@ public class FundStore {
                 String netListJson = response.toString().split("Data_netWorthTrend = ")[1].split(";/\\*累计净值走势\\*/")[0];
                 Gson gson = new Gson();
                 List<FundDailyRecord> fundDailyRecords = gson.fromJson(netListJson, new TypeToken<List<FundDailyRecord>>() {}.getType());
-                BigDecimal latestNetUnitValue = fundDailyRecords.get(fundDailyRecords.size()-2).getY();
+                BigDecimal latestNetUnitValue = fundDailyRecords.get(fundDailyRecords.size()-1).getY();
                 fund.setNetUnitValue(latestNetUnitValue);
             }
         } catch (Exception e) {
