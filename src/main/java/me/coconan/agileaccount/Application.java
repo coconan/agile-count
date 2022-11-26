@@ -79,7 +79,9 @@ public class Application {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Map<LocalDate, BigDecimal> investmentAmountByMonth = account.getInvestmentAmountByMonth();
                 BigDecimal accumulatedInvestment = BigDecimal.ZERO;
-                for (LocalDate date = account.getStartedDate(); date.isBefore(LocalDate.now()); date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+                for (LocalDate date = account.getStartedDate();
+                    date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
+                    date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
                     BigDecimal investment = investmentAmountByMonth.get(date) == null ? BigDecimal.ZERO : investmentAmountByMonth.get(date);
                     accumulatedInvestment = accumulatedInvestment.add(investment);
                     System.out.printf("%s %16s %16s\n", dtf.format(date), investment.setScale(2, RoundingMode.HALF_DOWN),

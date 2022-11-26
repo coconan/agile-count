@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Account {
-    private Map<Fund, List<Operation>> assets = new HashMap<>();
+    private Map<Fund, Map<LocalDate, List<Operation>>> assets = new HashMap<>();
     private Map<LocalDate, List<Operation>> operationsByDate = new HashMap<>();
     private LocalDate startedDate;
 
@@ -25,29 +25,41 @@ public class Account {
     }
     
     public void addOperation(Operation operation) {
-        List<Operation> operationList = assets.get(operation.getFund());
-        if (operationList == null) {
-            operationList = new ArrayList<>();
-        }
-        operationList.add(operation);
-        assets.put(operation.getFund(), operationList);
-        
+        Map<LocalDate, List<Operation>> fundOperationByDateMap = assets.computeIfAbsent(operation.getFund(), k -> new HashMap<>());
         LocalDate lastDayOfMonth = operation.getConfirmedDate().with(TemporalAdjusters.lastDayOfMonth());
         if (lastDayOfMonth.isBefore(startedDate)) {
             startedDate = lastDayOfMonth;
         }
-        if (operationsByDate.get(lastDayOfMonth) == null) {
-            operationsByDate.put(lastDayOfMonth, new ArrayList<>());
+        
+        List<Operation> operationList = fundOperationByDateMap.get(lastDayOfMonth);
+        if (operationList == null) {
+            operationList = new ArrayList<>();
         }
+        operationList.add(operation);
+        fundOperationByDateMap.put(lastDayOfMonth, operationList);
+
+        operationsByDate.computeIfAbsent(lastDayOfMonth, k -> new ArrayList<>());
         operationsByDate.get(lastDayOfMonth).add(operation);
     }
 
     public Asset getAsset(Fund fund) {
-        List<Operation> operationList = assets.get(fund);
+        Map<LocalDate, List<Operation>> fundOperationByDateMap = assets.get(fund);
+        List<Operation> operationList = new ArrayList<>();
+        for (LocalDate date = getStartedDate();
+            date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
+            date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+            List<Operation> operationsOnDate = fundOperationByDateMap.get(date);
+            if (operationsOnDate == null) {
+                continue;
+            }
+            operationList.addAll(operationsOnDate);
+        }
+        
         Asset asset = new Asset(fund, "coconan");
         for (Operation operation : operationList) {
             asset.apply(operation);
         }
+        
         return asset;
     }
 
