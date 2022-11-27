@@ -55,8 +55,8 @@ public class Application {
                 if (args.length == 5 && args[4] != null) {
                     date = LocalDate.parse(args[4]);
                 }
-                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n",
-                    "code", "cost", "amount", "earning", "earning rate", "fixed earning", "net price", "cost price", "share", "name");
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
+                    "code", "cost", "amount", "earning", "earning rate", "fixed earning", "net price", "cost price", "share", "service fee", "name");
                 List<Asset> assets = account.getAssets(date);
                 for (Asset asset : assets) {
                     if (asset.isNullAsset()) {
@@ -75,18 +75,21 @@ public class Application {
                     BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_UP);
                     BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
-                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %s\n",
-                        code, cost, amount, earning, earningRate, fixedEarning, netPrice, costPrice, share, name);
+                    BigDecimal serviceFee = asset.getServiceFee().setScale(2, RoundingMode.HALF_DOWN);
+                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
+                        code, cost, amount, earning, earningRate, fixedEarning, netPrice, costPrice, share, serviceFee,  name);
                 }
 
                 InvestmentStats investmentStats = account.getInvestmentStats(assets, date);
-                System.out.printf("%6s %10s %10s %10s %16s%% %16s %s\n",
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
                     " ",
                     investmentStats.getTotalCost().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
+                    "", "", "",
+                    investmentStats.getTotalServiceFee().setScale(2, RoundingMode.HALF_DOWN),
                     " ");
             } else if ("chart".equals(args[3])) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");

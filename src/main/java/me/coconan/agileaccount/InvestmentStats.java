@@ -7,6 +7,7 @@ public class InvestmentStats {
     private BigDecimal totalCost;
     private BigDecimal totalAmount;
     private BigDecimal totalFixedEarning;
+    private BigDecimal totalServiceFee;
 
     public InvestmentStats() {
         totalCost = BigDecimal.ZERO;
@@ -36,6 +37,14 @@ public class InvestmentStats {
 
     public BigDecimal getTotalFixedEarning() {
         return totalFixedEarning;
+    }
+
+    public void setTotalServiceFee(BigDecimal totalServiceFee) {
+        this.totalServiceFee = totalServiceFee;
+    }
+
+    public BigDecimal getTotalServiceFee() {
+        return totalServiceFee;
     }
 
     public BigDecimal getTotalEarning() {

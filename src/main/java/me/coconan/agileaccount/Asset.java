@@ -32,6 +32,7 @@ public class Asset {
             BigDecimal earning = operation.getNetUnitValue().subtract(costPrice).multiply(operation.getShare().negate());
             fixedEarning = fixedEarning.add(earning).subtract(operation.getServiceFee());
             cost = costPrice.multiply(updatedShare);
+            serviceFee = serviceFee.add(operation.getServiceFee());
         }
         share = updatedShare;
     }
@@ -54,6 +55,10 @@ public class Asset {
 
     public BigDecimal getCost() {
         return cost;
+    }
+
+    public BigDecimal getServiceFee() {
+        return serviceFee;
     }
 
     public Asset copy() {

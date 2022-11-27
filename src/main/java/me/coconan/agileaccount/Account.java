@@ -47,6 +47,7 @@ public class Account {
         investmentStats.setTotalCost(calculateTotalCost(assets));
         investmentStats.setTotalFixedEarning(calculateTotalFixedEarning(assets));
         investmentStats.setTotalAmount(calculateTotalAmount(assets, date));
+        investmentStats.setTotalServiceFee(calculateTotalServiceFee(assets));
 
         return investmentStats;
     }
@@ -145,5 +146,14 @@ public class Account {
         }
         
         return totalFixedEarning;
+    }
+
+    private BigDecimal calculateTotalServiceFee(Collection<Asset> assets) {
+        BigDecimal totalServiceFee = new BigDecimal(0);
+        for (Asset asset : assets) {
+            totalServiceFee = totalServiceFee.add(asset.getServiceFee());
+        }
+
+        return totalServiceFee;
     }
 }
