@@ -5,6 +5,7 @@
 - [ ] draw asset change graph
 - [ ] draw asset pie graph
 - [X] asset fund operation by date
+- [ ] support cash dividend
 
 ## usage
 ```
