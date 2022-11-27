@@ -65,7 +65,7 @@ public class Application {
                     }
                     String code = asset.getFund().getCode();
                     String name = asset.getFund().getName();
-                    BigDecimal netPrice = asset.getFund().getNetUnitValue().setScale(4, RoundingMode.HALF_DOWN);
+                    BigDecimal netPrice = asset.getFund().getLatestNetUnitValueForDate(date).setScale(4, RoundingMode.HALF_DOWN);
                     BigDecimal cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal amount = asset.getShare().multiply(asset.getFund().getLatestNetUnitValueForDate(date))
                             .setScale(2, RoundingMode.HALF_DOWN);
