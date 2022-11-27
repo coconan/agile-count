@@ -69,6 +69,21 @@ public class Account {
         return investmentStatsByDate;
     }
 
+    public Map<Fund, List<Operation>> getOperationsByDateRange(LocalDate startedDate, LocalDate endDate) {
+        Map<Fund, List<Operation>> fundOperationsMap = new HashMap<>();
+        for (Fund fund : assets.keySet()) {
+            List<Operation> operations = new ArrayList<>();
+            for (LocalDate date = startedDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+                if (assets.get(fund) != null && assets.get(fund).get(date) != null) {
+                    operations.addAll(assets.get(fund).get(date));
+                }
+            }
+            fundOperationsMap.put(fund, operations);
+        }
+
+        return fundOperationsMap;
+    }
+
     private Map<LocalDate, Map<Fund, Asset>> buildAssetByDateMap() {
         Map<LocalDate, Map<Fund, Asset>> assetByDateMap = new HashMap<>();
         for (LocalDate date = getStartedDate(); date.isBefore(LocalDate.now().plusDays(1)); date = date.plusDays(1)) {

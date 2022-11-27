@@ -123,6 +123,27 @@ public class Application {
                         investmentStatsThisDate.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN)
                     );
                 }
+            } else if ("operation".equals(args[3])) {
+                LocalDate startDate = LocalDate.parse(args[4]);
+                LocalDate endDate = LocalDate.parse(args[5]);
+                Map<Fund, List<Operation>> fundOperationsByDateMap = account.getOperationsByDateRange(startDate, endDate);
+                for (Fund fund : fundOperationsByDateMap.keySet()) {
+                    if (fundOperationsByDateMap.get(fund) == null || fundOperationsByDateMap.get(fund).isEmpty()) {
+                        continue;
+                    }
+                    System.out.printf("%s\n", fund.getName());
+                    for (Operation operation : fundOperationsByDateMap.get(fund)) {
+                        System.out.printf("%s %s %s %10s %10s %10s %10s\n",
+                                operation.getFund().getCode(),
+                                operation.getSubmittedDate(),
+                                operation.getConfirmedDate(),
+                                operation.getCost().setScale(2, RoundingMode.HALF_DOWN),
+                                operation.getNetUnitValue().setScale(4, RoundingMode.HALF_DOWN),
+                                operation.getShare().setScale(2, RoundingMode.HALF_DOWN),
+                                operation.getServiceFee().setScale(2, RoundingMode.HALF_DOWN));
+                    }
+                    System.out.println();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

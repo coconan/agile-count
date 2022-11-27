@@ -28,6 +28,10 @@ public class Operation {
         return fund;
     }
 
+    public LocalDate getSubmittedDate() {
+        return submittedDate;
+    }
+
     public LocalDate getConfirmedDate() {
         return this.confirmedDate;
     }
