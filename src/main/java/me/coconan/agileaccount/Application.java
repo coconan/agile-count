@@ -12,15 +12,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Application {
     
     public static void main(String[] args) {
-        Path assetsPath = Paths.get(args[0]);
         Path operationsDirPath = Paths.get(args[1]);
         Path fundsPath = Paths.get(args[2]);
-        try (FileReader assetsFileReader = new FileReader(assetsPath.toFile());
-            FileReader fundsFileReader = new FileReader(fundsPath.toFile())) {
+        try (FileReader fundsFileReader = new FileReader(fundsPath.toFile())) {
             FundStore fundStore = new FundStore();
             try (BufferedReader reader = new BufferedReader(fundsFileReader)) {
                 String line;
@@ -29,12 +28,12 @@ public class Application {
                     if (fields.length != 3) {
                         continue;
                     }
-                    fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2], fields[1].trim()));
+                    fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2]));
                 }
             }
 
             Account account = new Account();
-            for (File operationsFile : operationsDirPath.toFile().listFiles()) {
+            for (File operationsFile : Objects.requireNonNull(operationsDirPath.toFile().listFiles())) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(operationsFile))) {
                     String line;
                     while ((line = reader.readLine()) != null) {

@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Operation {
-    private Fund fund;
-    private LocalDate submittedDate;
-    private LocalDate confirmedDate;
-    private BigDecimal cost;
-    private BigDecimal share;
-    private BigDecimal netUnitValue;
-    private BigDecimal serviceFee;
-    private String platform;
+    private final Fund fund;
+    private final LocalDate submittedDate;
+    private final LocalDate confirmedDate;
+    private final BigDecimal cost;
+    private final BigDecimal share;
+    private final BigDecimal netUnitValue;
+    private final BigDecimal serviceFee;
+    private final String platform;
     
     public Operation(Fund fund, String submittedDate, String confirmedDate, String cost, String share, String netUnitValue, String serviceFee, String platform) {
         this.fund = fund;
@@ -26,10 +26,6 @@ public class Operation {
 
     public Fund getFund() {
         return fund;
-    }
-
-    public LocalDate getSubmittedDate() {
-        return this.submittedDate;
     }
 
     public LocalDate getConfirmedDate() {
@@ -48,11 +44,21 @@ public class Operation {
         return serviceFee;
     }
 
-    public String getPlatform() {
-        return platform;
-    }
-
     public BigDecimal getCost() {
         return cost;
+    }
+
+    @Override
+    public String toString() {
+        return "Operation{" +
+                "fund=" + fund +
+                ", submittedDate=" + submittedDate +
+                ", confirmedDate=" + confirmedDate +
+                ", cost=" + cost +
+                ", share=" + share +
+                ", netUnitValue=" + netUnitValue +
+                ", serviceFee=" + serviceFee +
+                ", platform='" + platform + '\'' +
+                '}';
     }
 }

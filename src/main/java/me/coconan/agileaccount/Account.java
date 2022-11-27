@@ -96,7 +96,7 @@ public class Account {
     }
 
     private Asset calculateAsset(Asset oldAsset, List<Operation> operations) {
-        Asset newAsset = oldAsset.clone();
+        Asset newAsset = oldAsset.copy();
         for (Operation operation : operations) {
             newAsset.apply(operation);
         }

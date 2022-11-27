@@ -14,15 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Fund {
-    private String code;
-    private String name;
-    private BigDecimal netUnitValue;
+    private final String code;
+    private final String name;
     private Map<LocalDate, FundDailyRecord> fundDailyRecordMap;
 
-    public Fund(String code, String name, String netUnitValue) {
+    public Fund(String code, String name) {
         this.code = code;
         this.name = name;
-        this.netUnitValue = new BigDecimal(netUnitValue);
     }
 
     public String getCode() {
@@ -31,20 +29,6 @@ public class Fund {
 
     public String getName() {
         return name;
-    }
-
-    public BigDecimal getNetUnitValue() {
-        if (fundDailyRecordMap == null) {
-            loadFundDailyRecords();
-        }
-        return netUnitValue;
-    }
-
-    public Map<LocalDate, FundDailyRecord> getFundDailyRecordMap() {
-        if (fundDailyRecordMap == null) {
-            loadFundDailyRecords();
-        }
-        return fundDailyRecordMap;
     }
 
     public BigDecimal getLatestNetUnitValueForDate(LocalDate date) {
@@ -75,8 +59,7 @@ public class Fund {
                 String netListJson = response.toString().split("Data_netWorthTrend = ")[1].split(";/\\*累计净值走势\\*/")[0];
                 Gson gson = new Gson();
                 List<FundDailyRecord> fundDailyRecords = gson.fromJson(netListJson, new TypeToken<List<FundDailyRecord>>() {}.getType());
-                this.netUnitValue = fundDailyRecords.get(fundDailyRecords.size()-1).getY();
-                
+
                 fundDailyRecordMap = new HashMap<>();
                 for (FundDailyRecord fundDailyRecord : fundDailyRecords) {
                     fundDailyRecordMap.put(Instant.ofEpochMilli(fundDailyRecord.getX()).atZone(ZoneId.systemDefault()).toLocalDate(), fundDailyRecord);

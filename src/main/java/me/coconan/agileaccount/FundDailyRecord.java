@@ -12,15 +12,17 @@ public class FundDailyRecord {
         return x;
     }
 
-    public void setX(long x) {
-        this.x = x;
-    }
-
     public BigDecimal getY() {
         return y;
     }
 
-    public void setY(BigDecimal y) {
-        this.y = y;
+    @Override
+    public String toString() {
+        return "FundDailyRecord{" +
+                "x=" + x +
+                ", y=" + y +
+                ", equityReturn=" + equityReturn +
+                ", unitMoney='" + unitMoney + '\'' +
+                '}';
     }
 }
