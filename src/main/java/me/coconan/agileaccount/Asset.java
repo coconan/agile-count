@@ -60,11 +60,26 @@ public class Asset {
         return serviceFee;
     }
 
-    public BigDecimal getAmount() {
-        return getShare().multiply(fund.getNetUnitValue());
-    }
-
     public BigDecimal getCost() {
         return cost;
+    }
+
+    public Asset clone() {
+        Asset newAsset = new Asset(fund, platform);
+        newAsset.share = this.share;
+        newAsset.cost = this.cost;
+        newAsset.costPrice = this.costPrice;
+        newAsset.fixedEarning = this.fixedEarning;
+        newAsset.serviceFee = this.serviceFee;
+        
+        return newAsset;
+    }
+
+    public boolean isNullAsset() {
+        return this.share.equals(BigDecimal.ZERO) &&
+            this.cost.equals(BigDecimal.valueOf(0)) &&
+            this.costPrice.equals(BigDecimal.valueOf(0)) &&
+            this.fixedEarning.equals(BigDecimal.valueOf(0)) &&
+            this.serviceFee.equals(BigDecimal.valueOf(0));
     }
 }

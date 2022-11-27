@@ -3,17 +3,10 @@ package me.coconan.agileaccount;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Account {
-    private Map<Fund, Map<LocalDate, List<Operation>>> assets = new HashMap<>();
-    private Map<LocalDate, List<Operation>> operationsByDate = new HashMap<>();
+    private final Map<Fund, Map<LocalDate, List<Operation>>> assets = new HashMap<>();
     private LocalDate startedDate;
 
     public Account() {
@@ -37,89 +30,89 @@ public class Account {
         }
         operationList.add(operation);
         fundOperationByDateMap.put(lastDayOfMonth, operationList);
-
-        operationsByDate.computeIfAbsent(lastDayOfMonth, k -> new ArrayList<>());
-        operationsByDate.get(lastDayOfMonth).add(operation);
     }
 
-    public Asset getAsset(Fund fund) {
-        Map<LocalDate, List<Operation>> fundOperationByDateMap = assets.get(fund);
-        List<Operation> operationList = new ArrayList<>();
-        for (LocalDate date = getStartedDate();
-            date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
-            date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
-            List<Operation> operationsOnDate = fundOperationByDateMap.get(date);
-            if (operationsOnDate == null) {
-                continue;
-            }
-            operationList.addAll(operationsOnDate);
+    public List<Asset> getAssets(LocalDate date) {
+        Map<LocalDate, Map<Fund, Asset>> assetByMonthMap = buildAssetByMonthMap();
+        date  = date.with(TemporalAdjusters.lastDayOfMonth());
+        if (assetByMonthMap.get(date) == null) {
+          return new ArrayList<>();
         }
-        
-        Asset asset = new Asset(fund, "coconan");
-        for (Operation operation : operationList) {
-            asset.apply(operation);
-        }
-        
-        return asset;
-    }
-
-    public List<Asset> getAssets() {
-        List<Asset> assetCollection = new ArrayList<>();
-        for (Fund fund : assets.keySet()) {
-            assetCollection.add(getAsset(fund));
-        }
-        Collections.sort(assetCollection, new Comparator<Asset>() {
-            @Override
-            public int compare(Asset asset1, Asset asset2) {
-                return asset1.getFund().getCode().compareTo(asset2.getFund().getCode());
-            }
-        });
+        List<Asset> assetCollection = new ArrayList<>(assetByMonthMap.get(date).values());
+        assetCollection.sort(Comparator.comparing(asset -> asset.getFund().getCode()));
         
         return assetCollection;
     }
 
-    public BigDecimal getTotalAmount() {
-        return calculateTotalAmount(getAssets());
+    public InvestmentStats getInvestmentStats(Collection<Asset> assets, LocalDate date) {
+        InvestmentStats investmentStats = new InvestmentStats();
+        investmentStats.setTotalCost(calculateTotalCost(assets));
+        investmentStats.setTotalFixedEarning(calculateTotalFixedEarning(assets));
+        investmentStats.setTotalAmount(calculateTotalAmount(assets, date));
+
+        return investmentStats;
     }
 
-    public BigDecimal getTotalCost() {
-        return calculateTotalCost(getAssets());
-    }
-
-    public BigDecimal getTotalFixedEarning() {
-        return calculateTotalFixedEarning(getAssets());
-    }
-
-    public Map<LocalDate, BigDecimal> getInvestmentAmountByMonth() {
-        Map<LocalDate, BigDecimal> investmentAmountByMonth = new HashMap<>();
-        for (LocalDate date = startedDate; date.isBefore(LocalDate.now()); date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
-            investmentAmountByMonth.put(date, calculateTotalAmountForOperations(operationsByDate.get(date)));
-        }
+    public Map<LocalDate, InvestmentStats> getInvestmentStatsByMonth() {
+        Map<LocalDate, InvestmentStats> investmentStatsByMonth = new HashMap<>();
         
-        return investmentAmountByMonth;
-    }
-
-    private BigDecimal calculateTotalAmountForOperations(Collection<Operation> operations) {
-        if (operations == null) {
-            return BigDecimal.ZERO;
-        }
-        
-        BigDecimal totalAmount = new BigDecimal(0);
-        for (Operation operation : operations) {
-            if (operation.getShare().compareTo(BigDecimal.ZERO) > 0) {
-                totalAmount = totalAmount.add(operation.getCost());
-            } else {
-                totalAmount = totalAmount.subtract(operation.getCost());
+        Map<LocalDate, Map<Fund, Asset>> assetByMonthMap = buildAssetByMonthMap();
+        for (LocalDate date = getStartedDate();
+            date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
+            date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+            Map<Fund, Asset> assetMapThisMonth = assetByMonthMap.get(date);
+            if (assetMapThisMonth == null) {
+                assetMapThisMonth = new HashMap<>();
             }
+            InvestmentStats investmentStats = getInvestmentStats(assetMapThisMonth.values(), date);
+            investmentStatsByMonth.put(date, investmentStats);
         }
-        
-        return totalAmount;       
+
+        return investmentStatsByMonth;
     }
 
-    private BigDecimal calculateTotalAmount(Collection<Asset> assets) {
+    private Map<LocalDate, Map<Fund, Asset>> buildAssetByMonthMap() {
+        Map<LocalDate, Map<Fund, Asset>> assetByMonthMap = new HashMap<>();
+        for (LocalDate date = getStartedDate();
+            date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
+            date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
+            Map<Fund, Asset> assetMapLastMonth = assetByMonthMap.get(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
+            if (assetMapLastMonth == null) {
+                assetMapLastMonth = new HashMap<>();
+            }
+            Map<Fund, Asset> assetMapThisMonth = new HashMap<>();
+            for (Fund fund : assets.keySet()) {
+                Asset assetLastMonth = assetMapLastMonth.get(fund);
+                if (assetLastMonth == null) {
+                    assetLastMonth = new Asset(fund, "coconan");
+                }
+                List<Operation> operationsInThisMonth = assets.get(fund).get(date);
+                if (operationsInThisMonth == null) {
+                    operationsInThisMonth = new ArrayList<>();
+                }
+                Asset assetThisMonth = calculateAsset(assetLastMonth, operationsInThisMonth);
+                assetMapThisMonth.put(fund, assetThisMonth);
+            }
+            assetByMonthMap.put(date, assetMapThisMonth);
+        }
+
+        return assetByMonthMap;
+    }
+
+    private Asset calculateAsset(Asset oldAsset, List<Operation> operations) {
+        Asset newAsset = oldAsset.clone();
+        for (Operation operation : operations) {
+            newAsset.apply(operation);
+        }
+        
+        return newAsset;
+    }
+
+    private BigDecimal calculateTotalAmount(Collection<Asset> assets, LocalDate date) {
         BigDecimal totalAmount = new BigDecimal(0);
         for (Asset asset : assets) {
-            totalAmount = totalAmount.add(asset.getAmount());
+            BigDecimal amount = asset.getShare().multiply(asset.getFund().getLatestNetUnitValueForDate(date));
+            totalAmount = totalAmount.add(amount);
         }
         
         return totalAmount;
