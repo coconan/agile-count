@@ -8,6 +8,12 @@ public class InvestmentStats {
     private BigDecimal totalAmount;
     private BigDecimal totalFixedEarning;
 
+    public InvestmentStats() {
+        totalCost = BigDecimal.ZERO;
+        totalAmount = BigDecimal.ZERO;
+        totalFixedEarning = BigDecimal.ZERO;
+    }
+
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
     }
@@ -37,6 +43,9 @@ public class InvestmentStats {
     }
 
     public BigDecimal getEarningRate() {
+        if (totalCost.equals(BigDecimal.ZERO)) {
+            return BigDecimal.ZERO;
+        }
         return getTotalEarning().divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
     }
 }

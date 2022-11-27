@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
@@ -92,36 +91,57 @@ public class Application {
                     " ");
             } else if ("chart".equals(args[3])) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                Map<LocalDate, InvestmentStats> investmentStatsByMonth = account.getInvestmentStatsByMonth();
+                Map<LocalDate, InvestmentStats> investmentStatsByDate = account.getInvestmentStatsByDate();
+                String step = "day";
+                if (args.length == 5 && args[4] != null) {
+                    step = args[4];
+                }
                 for (LocalDate date = account.getStartedDate();
-                    date.isBefore(LocalDate.now().plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
-                    date = date.plusDays(1).with(TemporalAdjusters.lastDayOfMonth())) {
-                    InvestmentStats investmentStatsLastMonth = investmentStatsByMonth.get(date.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()));
-                    if (investmentStatsLastMonth == null) {
-                        investmentStatsLastMonth = new InvestmentStats();
+                    date.isBefore(changeStep(LocalDate.now(), step, 1));
+                    date = changeStep(date, step, 1)) {
+                    InvestmentStats investmentStatsLastDate = investmentStatsByDate.get(changeStep(date, step , -1));
+                    if (investmentStatsLastDate == null) {
+                        investmentStatsLastDate = new InvestmentStats();
                     }
-                    InvestmentStats investmentStatsThisMonth = investmentStatsByMonth.get(date);
-                    if (investmentStatsThisMonth == null) {
-                        investmentStatsThisMonth = new InvestmentStats();
+                    InvestmentStats investmentStatsThisDate = investmentStatsByDate.get(date);
+                    int count = 1;
+                    while (investmentStatsThisDate == null) {
+                        investmentStatsThisDate = investmentStatsByDate.get(date.minusDays(count));
+                        count += 1;
                     }
-                    BigDecimal accumulatedInvestmentThisMonth = investmentStatsByMonth.get(date).getTotalCost() == null
-                            ? BigDecimal.ZERO : investmentStatsByMonth.get(date).getTotalCost();
-                    BigDecimal accumulatedInvestmentLastMonth = investmentStatsLastMonth.getTotalCost() == null
-                            ? BigDecimal.ZERO : investmentStatsLastMonth.getTotalCost();
-                    BigDecimal investmentThisMonth = accumulatedInvestmentThisMonth.subtract(accumulatedInvestmentLastMonth);
+                    BigDecimal accumulatedInvestmentThisDate = investmentStatsThisDate.getTotalCost() == null
+                            ? BigDecimal.ZERO : investmentStatsThisDate.getTotalCost();
+                    BigDecimal accumulatedInvestmentLastDate = investmentStatsLastDate.getTotalCost() == null
+                            ? BigDecimal.ZERO : investmentStatsLastDate.getTotalCost();
+                    BigDecimal investmentThisDate = accumulatedInvestmentThisDate.subtract(accumulatedInvestmentLastDate);
                     System.out.printf("%s %16s %16s %16s %16s %16s%% %16s\n",
                         dtf.format(date),
-                        investmentThisMonth.setScale(2, RoundingMode.HALF_DOWN),
-                        accumulatedInvestmentThisMonth.setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisMonth.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisMonth.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisMonth.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisMonth.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN)
+                        investmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
+                        accumulatedInvestmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
+                        investmentStatsThisDate.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
+                        investmentStatsThisDate.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
+                        investmentStatsThisDate.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
+                        investmentStatsThisDate.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN)
                     );
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static LocalDate changeStep(LocalDate date, String step, int count) {
+        switch (step) {
+            case "day":
+                return date.plusDays(count);
+            case "week":
+                return date.plusWeeks(count);
+            case "month":
+                return date.plusMonths(count);
+            case "year":
+                return date.plusYears(count);
+            default:
+                throw new RuntimeException("unsupported step");
         }
     }
 }

@@ -9,5 +9,5 @@
 ## usage
 ```
 ./run.sh asset 2021-09-30
-./run.sh chart
+./run.sh chart week
 ```
