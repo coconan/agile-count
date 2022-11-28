@@ -1,4 +1,5 @@
 ## Todo
+- [X] cache fund data in local files
 - [ ] integrate sqlite to cache funds data
 - [ ] package as a desktop application
 - [X] get assets by date

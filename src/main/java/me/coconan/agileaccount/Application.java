@@ -148,6 +148,8 @@ public class Application {
                     System.out.println();
                 }
             }
+
+            Executor.networkIO().shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         }
