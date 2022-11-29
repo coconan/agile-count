@@ -95,11 +95,17 @@ public class Application {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Map<LocalDate, InvestmentStats> investmentStatsByDate = account.getInvestmentStatsByDate();
                 String step = "day";
-                if (args.length == 5 && args[4] != null) {
+                if (args.length >= 5 && args[4] != null) {
                     step = args[4];
                 }
-                for (LocalDate date = account.getStartedDate();
-                    date.isBefore(changeStep(LocalDate.now(), step, 1));
+                LocalDate start = account.getStartedDate();
+                LocalDate end = LocalDate.now();
+                if (args.length == 7 && args[5] != null && args[6] != null) {
+                    start = LocalDate.parse(args[5]);
+                    end = LocalDate.parse(args[6]);
+                }
+                for (LocalDate date = start;
+                    date.isBefore(changeStep(end, step, 1));
                     date = changeStep(date, step, 1)) {
                     InvestmentStats investmentStatsLastDate = investmentStatsByDate.get(changeStep(date, step , -1));
                     if (investmentStatsLastDate == null) {
@@ -116,14 +122,21 @@ public class Application {
                     BigDecimal accumulatedInvestmentLastDate = investmentStatsLastDate.getTotalCost() == null
                             ? BigDecimal.ZERO : investmentStatsLastDate.getTotalCost();
                     BigDecimal investmentThisDate = accumulatedInvestmentThisDate.subtract(accumulatedInvestmentLastDate);
-                    System.out.printf("%s %16s %16s %16s %16s %16s%% %16s\n",
+
+                    BigDecimal dailyEarnings = investmentStatsByDate.get(date.minusDays(1)) == null
+                            ? BigDecimal.ZERO
+                            : investmentStatsThisDate.getTotalEarning()
+                            .subtract(investmentStatsByDate.get(date.minusDays(1)).getTotalEarning())
+                            .subtract(investmentThisDate);
+                    System.out.printf("%s %16s %16s %16s %16s %16s%% %16s %16s\n",
                         dtf.format(date),
                         investmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
                         accumulatedInvestmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisDate.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN)
+                        investmentStatsThisDate.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
+                        dailyEarnings.setScale(2, RoundingMode.HALF_DOWN)
                     );
                 }
             } else if ("operation".equals(args[3])) {
