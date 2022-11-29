@@ -8,7 +8,7 @@
 - [X] asset fund operation by date
 - [ ] support cash dividend
 - [X] get operations by date range
-- [ ] show service fee
+- [X] show service fee
 - [X] daily earnings
 
 ## usage
