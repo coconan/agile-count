@@ -128,8 +128,7 @@ public class Application {
                     BigDecimal dailyEarnings = investmentStatsByDate.get(date.minusDays(1)) == null
                             ? BigDecimal.ZERO
                             : investmentStatsThisDate.getTotalEarning()
-                            .subtract(investmentStatsByDate.get(date.minusDays(1)).getTotalEarning())
-                            .subtract(investmentThisDate);
+                            .subtract(investmentStatsByDate.get(date.minusDays(1)).getTotalEarning());
                     BigDecimal deltaFixedEarnings = investmentStatsThisDate.getTotalFixedEarning()
                             .subtract(investmentStatsLastDate.getTotalFixedEarning() == null ? BigDecimal.ZERO : investmentStatsLastDate.getTotalFixedEarning());
                     System.out.printf("%10s %16s %16s %16s %16s %16s %16s%% %24s %16s\n",
