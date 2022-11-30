@@ -104,6 +104,8 @@ public class Application {
                     start = LocalDate.parse(args[5]);
                     end = LocalDate.parse(args[6]);
                 }
+                System.out.printf("%-10s %16s %16s %16s %16s %16s %16s%% %24s %16s\n",
+                        "date", "delta cost", "total cost", "net in/out", "total amount", "total earning", "earning rate", "total fixed earning", "daily earning");
                 for (LocalDate date = start;
                     date.isBefore(changeStep(end, step, 1));
                     date = changeStep(date, step, 1)) {
@@ -128,10 +130,13 @@ public class Application {
                             : investmentStatsThisDate.getTotalEarning()
                             .subtract(investmentStatsByDate.get(date.minusDays(1)).getTotalEarning())
                             .subtract(investmentThisDate);
-                    System.out.printf("%s %16s %16s %16s %16s %16s%% %16s %16s\n",
+                    BigDecimal deltaFixedEarnings = investmentStatsThisDate.getTotalFixedEarning()
+                            .subtract(investmentStatsLastDate.getTotalFixedEarning() == null ? BigDecimal.ZERO : investmentStatsLastDate.getTotalFixedEarning());
+                    System.out.printf("%10s %16s %16s %16s %16s %16s %16s%% %24s %16s\n",
                         dtf.format(date),
                         investmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
                         accumulatedInvestmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
+                        investmentThisDate.subtract(deltaFixedEarnings).setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
                         investmentStatsThisDate.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),

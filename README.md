@@ -10,6 +10,7 @@
 - [X] get operations by date range
 - [X] show service fee
 - [X] daily earnings
+- [X] show net in/out
 
 ## usage
 ```
