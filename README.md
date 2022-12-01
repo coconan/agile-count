@@ -13,6 +13,7 @@
 - [X] show net in/out
 - [X] support operation type (all/in/out)
 - [X] show operation asset cost price
+- [ ] asset cost price for buy and sell in the same day
 
 ## usage
 ```
