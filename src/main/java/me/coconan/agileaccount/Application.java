@@ -165,14 +165,19 @@ public class Application {
                             System.out.printf("%s\n", fund.getName());
                             printHeader = true;
                         }
-                        System.out.printf("%s %s %s %10s %10s %10s %10s\n",
+                        Asset asset = account.getAsset(fund, operation.getConfirmedDate()); 
+                        if (asset == null) {
+                            asset = new Asset(null, "coconan");
+                        }
+                        System.out.printf("%s %s %s %10s %10s %10s %10s %10s\n",
                                 operation.getFund().getCode(),
                                 operation.getSubmittedDate(),
                                 operation.getConfirmedDate(),
                                 operation.getCost().setScale(2, RoundingMode.HALF_DOWN),
                                 operation.getNetUnitValue().setScale(4, RoundingMode.HALF_DOWN),
                                 operation.getShare().setScale(2, RoundingMode.HALF_DOWN),
-                                operation.getServiceFee().setScale(2, RoundingMode.HALF_DOWN));
+                                operation.getServiceFee().setScale(2, RoundingMode.HALF_DOWN),
+                                asset.getCostPrice().setScale(4, RoundingMode.HALF_DOWN));
                     }
                     if (printHeader) {
                         System.out.println();
