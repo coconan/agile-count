@@ -11,6 +11,7 @@
 - [X] show service fee
 - [X] daily earnings
 - [X] show net in/out
+- [X] support operation type (all/in/out)
 
 ## usage
 ```

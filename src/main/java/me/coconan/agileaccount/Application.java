@@ -146,13 +146,25 @@ public class Application {
             } else if ("operation".equals(args[3])) {
                 LocalDate startDate = LocalDate.parse(args[4]);
                 LocalDate endDate = LocalDate.parse(args[5]);
+                String type = "all";
+                if (args.length >= 7 && args[6] != null) {
+                    type = args[6];
+                }
                 Map<Fund, List<Operation>> fundOperationsByDateMap = account.getOperationsByDateRange(startDate, endDate);
                 for (Fund fund : fundOperationsByDateMap.keySet()) {
                     if (fundOperationsByDateMap.get(fund) == null || fundOperationsByDateMap.get(fund).isEmpty()) {
                         continue;
                     }
-                    System.out.printf("%s\n", fund.getName());
+                    boolean printHeader = false;
                     for (Operation operation : fundOperationsByDateMap.get(fund)) {
+                        if ((type.equals("in") && operation.getShare().compareTo(BigDecimal.ZERO) < 0)
+                            || (type.equals("out") && operation.getShare().compareTo(BigDecimal.ZERO) > 0)) {
+                            continue;
+                        }
+                        if (printHeader == false) {
+                            System.out.printf("%s\n", fund.getName());
+                            printHeader = true;
+                        }
                         System.out.printf("%s %s %s %10s %10s %10s %10s\n",
                                 operation.getFund().getCode(),
                                 operation.getSubmittedDate(),
@@ -162,7 +174,9 @@ public class Application {
                                 operation.getShare().setScale(2, RoundingMode.HALF_DOWN),
                                 operation.getServiceFee().setScale(2, RoundingMode.HALF_DOWN));
                     }
-                    System.out.println();
+                    if (printHeader) {
+                        System.out.println();
+                    }
                 }
             }
 
