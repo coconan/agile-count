@@ -15,6 +15,8 @@
 - [X] show operation asset cost price
 - [ ] asset cost price for buy and sell in the same day
 - [ ] add test suite
+- [ ] support operation add
+- [ ] refactoring with unit test
 
 ## usage
 ```
