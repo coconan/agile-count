@@ -17,6 +17,7 @@
 - [ ] add test suite
 - [ ] support operation add
 - [ ] refactoring with unit test
+- [X] show asset weightings
 
 ## usage
 ```
