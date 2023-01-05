@@ -55,8 +55,8 @@ public class Application {
                 if (args.length == 5 && args[4] != null) {
                     date = LocalDate.parse(args[4]);
                 }
-                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
-                    "code", "cost", "amount", "earning", "earning rate", "fixed earning", "net price", "cost price", "share", "service fee", "name");
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s %10s %10s %s\n",
+                    "code", "cost", "amount", "earning", "earning rate", "fixed earning", "service fee", "net price", "cost price", "share", "name");
                 List<Asset> assets = account.getAssets(date);
                 for (Asset asset : assets) {
                     if (asset.isNullAsset()) {
@@ -76,21 +76,20 @@ public class Application {
                     BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal serviceFee = asset.getServiceFee().setScale(2, RoundingMode.HALF_DOWN);
-                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
-                        code, cost, amount, earning, earningRate, fixedEarning, netPrice, costPrice, share, serviceFee,  name);
+                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s %10s %10s %s\n",
+                        code, cost, amount, earning, earningRate, fixedEarning, serviceFee, netPrice, costPrice, share, name);
                 }
 
                 InvestmentStats investmentStats = account.getInvestmentStats(assets, date);
-                System.out.printf("%6s %10s %10s %10s %16s%% %16s %10s %10s %10s %10s %s\n",
+                System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s %10s %10s %s\n",
                     " ",
                     investmentStats.getTotalCost().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
                     investmentStats.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
-                    "", "", "",
                     investmentStats.getTotalServiceFee().setScale(2, RoundingMode.HALF_DOWN),
-                    " ");
+                    "", "", "", " ");
             } else if ("chart".equals(args[3])) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Map<LocalDate, InvestmentStats> investmentStatsByDate = account.getInvestmentStatsByDate();
