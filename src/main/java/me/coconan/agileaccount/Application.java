@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,29 +62,27 @@ public class Application {
                     "code", "cost", "amount", "earning", "earning rate", "fixed earning", "service fee", "weight", "net price", "cost price", "share", "name");
                 List<Asset> assets = account.getAssets(date);
                 InvestmentStats investmentStats = account.getInvestmentStats(assets, date);
+                List<AssetRow> assetRows = new ArrayList<>();
                 for (Asset asset : assets) {
                     if (asset.isNullAsset()) {
                         continue;
                     }
-                    String code = asset.getFund().getCode();
-                    String name = asset.getFund().getName();
-                    BigDecimal netPrice = asset.getFund().getLatestNetUnitValueForDate(date).setScale(4, RoundingMode.HALF_DOWN);
-                    BigDecimal cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal amount = asset.getShare().multiply(asset.getFund().getLatestNetUnitValueForDate(date))
-                            .setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal earning = amount.subtract(cost).setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal earningRate = cost.compareTo(BigDecimal.valueOf(0)) == 0
-                        ? BigDecimal.valueOf(0)
-                        : earning.divide(cost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_UP);
-                    BigDecimal share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal serviceFee = asset.getServiceFee().setScale(2, RoundingMode.HALF_DOWN);
-                    BigDecimal weight = asset.getCost().divide(investmentStats.getTotalCost(), 5, RoundingMode.HALF_DOWN)
-                            .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
-                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %10s %10s %10s %s\n",
-                        code, cost, amount, earning, earningRate, fixedEarning, serviceFee, weight, netPrice, costPrice, share, name);
+                    AssetRow assetRow = AssetRow.build(asset, investmentStats, date);
+                    assetRows.add(assetRow);
                 }
+                Collections.sort(assetRows, new Comparator<AssetRow>() {
+                    @Override
+                    public int compare(AssetRow row1, AssetRow row2) {
+                        return row2.getWeight().compareTo(row1.getWeight());
+                    }
+                });
+                for (AssetRow assetRow : assetRows) {
+                    System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %10s %10s %10s %s\n",
+                        assetRow.getCode(), assetRow.getCost(), assetRow.getAmount(), assetRow.getEarning(),
+                        assetRow.getEarningRate(), assetRow.getFixedEarning(), assetRow.getServiceFee(), assetRow.getWeight(),
+                        assetRow.getNetPrice(), assetRow.getCostPrice(), assetRow.getShare(), assetRow.getName());
+                }
+
 
                 System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s %10s %10s %10s %s\n",
                     " ",

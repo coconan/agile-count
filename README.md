@@ -18,6 +18,7 @@
 - [ ] support operation add
 - [ ] refactoring with unit test
 - [X] show asset weightings
+- [X] sort assert row by weightings descend
 
 ## usage
 ```
