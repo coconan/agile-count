@@ -73,7 +73,7 @@ public class Application {
                 Collections.sort(assetRows, new Comparator<AssetRow>() {
                     @Override
                     public int compare(AssetRow row1, AssetRow row2) {
-                        return row2.getWeight().compareTo(row1.getWeight());
+                        return row2.getCost().compareTo(row1.getCost());
                     }
                 });
                 for (AssetRow assetRow : assetRows) {
