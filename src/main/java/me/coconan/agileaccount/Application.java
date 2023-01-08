@@ -109,40 +109,19 @@ public class Application {
                 System.out.printf("%-10s %16s %16s %16s %16s %16s %16s%% %24s %16s\n",
                         "date", "delta cost", "total cost", "net in/out", "total amount", "total earning", "earning rate", "total fixed earning", "daily earning");
                 for (LocalDate date = start;
-                    date.isBefore(changeStep(end, step, 1));
-                    date = changeStep(date, step, 1)) {
-                    InvestmentStats investmentStatsLastDate = investmentStatsByDate.get(changeStep(date, step , -1));
-                    if (investmentStatsLastDate == null) {
-                        investmentStatsLastDate = new InvestmentStats();
-                    }
-                    InvestmentStats investmentStatsThisDate = investmentStatsByDate.get(date);
-                    int count = 1;
-                    while (investmentStatsThisDate == null) {
-                        investmentStatsThisDate = investmentStatsByDate.get(date.minusDays(count));
-                        count += 1;
-                    }
-                    BigDecimal accumulatedInvestmentThisDate = investmentStatsThisDate.getTotalCost() == null
-                            ? BigDecimal.ZERO : investmentStatsThisDate.getTotalCost();
-                    BigDecimal accumulatedInvestmentLastDate = investmentStatsLastDate.getTotalCost() == null
-                            ? BigDecimal.ZERO : investmentStatsLastDate.getTotalCost();
-                    BigDecimal investmentThisDate = accumulatedInvestmentThisDate.subtract(accumulatedInvestmentLastDate);
-
-                    BigDecimal dailyEarnings = investmentStatsByDate.get(date.minusDays(1)) == null
-                            ? BigDecimal.ZERO
-                            : investmentStatsThisDate.getTotalEarning()
-                            .subtract(investmentStatsByDate.get(date.minusDays(1)).getTotalEarning());
-                    BigDecimal deltaFixedEarnings = investmentStatsThisDate.getTotalFixedEarning()
-                            .subtract(investmentStatsLastDate.getTotalFixedEarning() == null ? BigDecimal.ZERO : investmentStatsLastDate.getTotalFixedEarning());
+                    date.isBefore(DateUtil.changeStep(end, step, 1));
+                    date = DateUtil.changeStep(date, step, 1)) {
+                    ChartRow chartRow = ChartRow.build(date, step, investmentStatsByDate);
                     System.out.printf("%10s %16s %16s %16s %16s %16s %16s%% %24s %16s\n",
-                        dtf.format(date),
-                        investmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
-                        accumulatedInvestmentThisDate.setScale(2, RoundingMode.HALF_DOWN),
-                        investmentThisDate.subtract(deltaFixedEarnings).setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisDate.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisDate.getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisDate.getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
-                        investmentStatsThisDate.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
-                        dailyEarnings.setScale(2, RoundingMode.HALF_DOWN)
+                        dtf.format(chartRow.getDate()),
+                        chartRow.getInvestmentThisDate().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getAccumulatedInvestmentThisDate().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getInvestmentThisDate().subtract(chartRow.getDeltaFixedEarnings()).setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getInvestmentStatsThisDate().getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getInvestmentStatsThisDate().getTotalEarning().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getInvestmentStatsThisDate().getEarningRate().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getInvestmentStatsThisDate().getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
+                        chartRow.getDailyEarnings().setScale(2, RoundingMode.HALF_DOWN)
                     );
                 }
             } else if ("operation".equals(args[3])) {
@@ -190,21 +169,6 @@ public class Application {
             Executor.networkIO().shutdown();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static LocalDate changeStep(LocalDate date, String step, int count) {
-        switch (step) {
-            case "day":
-                return date.plusDays(count);
-            case "week":
-                return date.plusWeeks(count);
-            case "month":
-                return date.plusMonths(count);
-            case "year":
-                return date.plusYears(count);
-            default:
-                throw new RuntimeException("unsupported step");
         }
     }
 }
