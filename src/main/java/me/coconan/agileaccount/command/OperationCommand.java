@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OperationCommand implements Command {
     private final String[] args;
@@ -33,16 +34,18 @@ public class OperationCommand implements Command {
             if (fundOperationsByDateMap.get(fund) == null || fundOperationsByDateMap.get(fund).isEmpty()) {
                 continue;
             }
-            boolean printHeader = false;
-            for (Operation operation : fundOperationsByDateMap.get(fund)) {
-                if ((type.equals("in") && operation.getShare().compareTo(BigDecimal.ZERO) < 0)
-                    || (type.equals("out") && operation.getShare().compareTo(BigDecimal.ZERO) > 0)) {
-                    continue;
-                }
-                if (printHeader == false) {
-                    System.out.printf("%s\n", fund.getName());
-                    printHeader = true;
-                }
+            String finalType = type;
+            List<Operation> operations = fundOperationsByDateMap.get(fund).stream()
+                    .filter(
+                            operation -> (finalType.equals("in") && operation.getShare().compareTo(BigDecimal.ZERO) > 0)
+                                    || (finalType.equals("out") && operation.getShare().compareTo(BigDecimal.ZERO) < 0)
+                                    || (finalType.equals("all")))
+                    .collect(Collectors.toList());
+            if (operations.isEmpty()) {
+                continue;
+            }
+            for (Operation operation : operations) {
+                System.out.printf("%s\n", fund.getName());
                 Asset asset = account.getAsset(fund, operation.getConfirmedDate());
                 if (asset == null) {
                     asset = new Asset(null, "coconan");
@@ -57,9 +60,7 @@ public class OperationCommand implements Command {
                         operation.getServiceFee().setScale(2, RoundingMode.HALF_DOWN),
                         asset.getCostPrice().setScale(4, RoundingMode.HALF_DOWN));
             }
-            if (printHeader) {
-                System.out.println();
-            }
+            System.out.println();
         }
     }
 }
