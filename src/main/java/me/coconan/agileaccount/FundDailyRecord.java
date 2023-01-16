@@ -1,6 +1,9 @@
 package me.coconan.agileaccount;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class FundDailyRecord {
     private long x;
@@ -12,7 +15,19 @@ public class FundDailyRecord {
         return x;
     }
 
+    public LocalDate getLocalDate() {
+        return Instant.ofEpochMilli(getX()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
     public BigDecimal getY() {
+        return y;
+    }
+
+    public BigDecimal getNetUnitValue() {
+        if (y == null) {
+            return BigDecimal.ZERO;
+        }
+
         return y;
     }
 

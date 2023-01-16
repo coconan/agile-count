@@ -139,7 +139,8 @@ public class Account {
     private BigDecimal calculateTotalAmount(Collection<Asset> assets, LocalDate date) {
         BigDecimal totalAmount = new BigDecimal(0);
         for (Asset asset : assets) {
-            BigDecimal amount = asset.getShare().multiply(asset.getFund().getLatestNetUnitValueForDate(date));
+            FundDailyRecord fundDailyRecord = asset.getFund().getLatestFundDailyRecord(date);
+            BigDecimal amount = asset.getShare().multiply(fundDailyRecord.getNetUnitValue());
             totalAmount = totalAmount.add(amount);
         }
         

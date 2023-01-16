@@ -1,13 +1,10 @@
 package me.coconan.agileaccount;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Fund {
     private final String code;
@@ -35,7 +33,7 @@ public class Fund {
         return name;
     }
 
-    public BigDecimal getLatestNetUnitValueForDate(LocalDate date) {
+    public FundDailyRecord getLatestFundDailyRecord(LocalDate date) {
         if (fundDailyRecordMap == null) {
             loadFundDailyRecords();
         }
@@ -48,7 +46,7 @@ public class Fund {
         }
         FundDailyRecord latestFundDailyRecord = fundDailyRecordMap.get(latestDate);
 
-        return latestFundDailyRecord == null ? BigDecimal.ZERO : latestFundDailyRecord.getY();
+        return Objects.requireNonNullElseGet(latestFundDailyRecord, FundDailyRecord::new);
     }
 
     private void loadFundDailyRecords() {
@@ -74,7 +72,7 @@ public class Fund {
 
                 fundDailyRecordMap = new HashMap<>();
                 for (FundDailyRecord fundDailyRecord : fundDailyRecords) {
-                    fundDailyRecordMap.put(Instant.ofEpochMilli(fundDailyRecord.getX()).atZone(ZoneId.systemDefault()).toLocalDate(), fundDailyRecord);
+                    fundDailyRecordMap.put(fundDailyRecord.getLocalDate(), fundDailyRecord);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -8,6 +8,8 @@ public class AssetRow {
     private String code;
     private String name;
     private BigDecimal netPrice;
+    private LocalDate netPriceLocalDate;
+
     private BigDecimal cost;
     private BigDecimal amount;
     private BigDecimal earning;
@@ -28,6 +30,10 @@ public class AssetRow {
 
     public BigDecimal getNetPrice() {
         return netPrice;
+    }
+
+    public LocalDate getNetPriceLocalDate() {
+        return netPriceLocalDate;
     }
 
     public BigDecimal getCost() {
@@ -70,9 +76,11 @@ public class AssetRow {
         AssetRow assetRow = new AssetRow();
         assetRow.code = asset.getFund().getCode();
         assetRow.name = asset.getFund().getName();
-        assetRow.netPrice = asset.getFund().getLatestNetUnitValueForDate(date).setScale(4, RoundingMode.HALF_DOWN);
+        assetRow.netPrice = asset.getFund().getLatestFundDailyRecord(date).getNetUnitValue()
+                .setScale(4, RoundingMode.HALF_DOWN);
+        assetRow.netPriceLocalDate = asset.getFund().getLatestFundDailyRecord(date).getLocalDate();
         assetRow.cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
-        assetRow.amount = asset.getShare().multiply(asset.getFund().getLatestNetUnitValueForDate(date))
+        assetRow.amount = asset.getShare().multiply(asset.getFund().getLatestFundDailyRecord(date).getNetUnitValue())
                 .setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earning = assetRow.amount.subtract(assetRow.cost).setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earningRate = assetRow.cost.compareTo(BigDecimal.valueOf(0)) == 0

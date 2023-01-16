@@ -7,6 +7,7 @@ import me.coconan.agileaccount.InvestmentStats;
 
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,8 +28,8 @@ public class AssetCommand implements Command {
         if (args.length == 5 && args[4] != null) {
             date = LocalDate.parse(args[4]);
         }
-        System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %10s %10s %10s %s\n",
-            "code", "cost", "amount", "earning", "earning rate", "fixed earning", "service fee", "weight", "net price", "cost price", "share", "name");
+        System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %18s %10s %10s %s\n",
+            "code", "cost", "amount", "earning", "earning rate", "fixed earning", "service fee", "weight", "net price [ date]", "cost price", "share", "name");
         List<Asset> assets = account.getAssets(date);
         InvestmentStats investmentStats = account.getInvestmentStats(assets, date);
         List<AssetRow> assetRows = new ArrayList<>();
@@ -39,19 +40,14 @@ public class AssetCommand implements Command {
             AssetRow assetRow = AssetRow.build(asset, investmentStats, date);
             assetRows.add(assetRow);
         }
-        Collections.sort(assetRows, new Comparator<AssetRow>() {
-            @Override
-            public int compare(AssetRow row1, AssetRow row2) {
-                return row2.getCost().compareTo(row1.getCost());
-            }
-        });
+        assetRows.sort((row1, row2) -> row2.getCost().compareTo(row1.getCost()));
         for (AssetRow assetRow : assetRows) {
-            System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %10s %10s %10s %s\n",
-                assetRow.getCode(), assetRow.getCost(), assetRow.getAmount(), assetRow.getEarning(),
-                assetRow.getEarningRate(), assetRow.getFixedEarning(), assetRow.getServiceFee(), assetRow.getWeight(),
-                assetRow.getNetPrice(), assetRow.getCostPrice(), assetRow.getShare(), assetRow.getName());
+            System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s%% %10s [%s] %10s %10s %s\n",
+                    assetRow.getCode(), assetRow.getCost(), assetRow.getAmount(), assetRow.getEarning(),
+                    assetRow.getEarningRate(), assetRow.getFixedEarning(), assetRow.getServiceFee(), assetRow.getWeight(),
+                    assetRow.getNetPrice(), assetRow.getNetPriceLocalDate().format(DateTimeFormatter.ofPattern("MM-dd")),
+                    assetRow.getCostPrice(), assetRow.getShare(), assetRow.getName());
         }
-
 
         System.out.printf("%6s %10s %10s %10s %16s%% %16s %16s %10s %10s %10s %10s %s\n",
             " ",
