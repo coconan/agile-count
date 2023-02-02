@@ -3,4 +3,7 @@
 out
 target
 
+.metals
+.vscode
+
 .fundStore
