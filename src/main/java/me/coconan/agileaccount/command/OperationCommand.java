@@ -44,8 +44,8 @@ public class OperationCommand implements Command {
             if (operations.isEmpty()) {
                 continue;
             }
+            System.out.printf("%s\n", fund.getName());
             for (Operation operation : operations) {
-                System.out.printf("%s\n", fund.getName());
                 Asset asset = account.getAsset(fund, operation.getConfirmedDate());
                 if (asset == null) {
                     asset = new Asset(null, "coconan");
