@@ -17,6 +17,7 @@ public class AssetRow {
     private BigDecimal costPrice;
     private BigDecimal share;
     private BigDecimal fixedEarning;
+    private BigDecimal accumEarning;
     private BigDecimal serviceFee;
     private BigDecimal weight;
 
@@ -64,6 +65,10 @@ public class AssetRow {
         return fixedEarning;
     }
 
+    public BigDecimal getAccumEarning() {
+        return accumEarning;
+    }
+
     public BigDecimal getServiceFee() {
         return serviceFee;
     }
@@ -89,6 +94,7 @@ public class AssetRow {
         assetRow.costPrice = asset.getCostPrice().setScale(4, RoundingMode.HALF_UP);
         assetRow.share = asset.getShare().setScale(2, RoundingMode.HALF_DOWN);
         assetRow.fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
+        assetRow.accumEarning = asset.getFixedEarning().add(assetRow.amount.subtract(assetRow.cost)).setScale(2, RoundingMode.HALF_DOWN);
         assetRow.serviceFee = asset.getServiceFee().setScale(2, RoundingMode.HALF_DOWN);
         assetRow.weight = asset.getCost().divide(investmentStats.getTotalCost(), 5, RoundingMode.HALF_DOWN)
                 .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);

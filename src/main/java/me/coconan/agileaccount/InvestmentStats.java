@@ -7,6 +7,7 @@ public class InvestmentStats {
     private BigDecimal totalCost;
     private BigDecimal totalAmount;
     private BigDecimal totalFixedEarning;
+    private BigDecimal totalAccumEarning;
     private BigDecimal totalServiceFee;
 
     public InvestmentStats() {
@@ -48,7 +49,11 @@ public class InvestmentStats {
     }
 
     public BigDecimal getTotalEarning() {
-        return totalAmount.subtract(totalCost).setScale(2, RoundingMode.HALF_DOWN);
+        return totalAmount.subtract(totalCost);
+    }
+
+    public BigDecimal getTotalAccumEarning() {
+        return getTotalEarning().add(getTotalFixedEarning());
     }
 
     public BigDecimal getEarningRate() {
