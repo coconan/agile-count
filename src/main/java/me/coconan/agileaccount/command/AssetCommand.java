@@ -25,8 +25,8 @@ public class AssetCommand implements Command {
     @Override
     public void execute() {
         LocalDate date = LocalDate.now();
-        if (args.length == 5 && args[4] != null) {
-            date = LocalDate.parse(args[4]);
+        if (args.length == 4 && args[3] != null) {
+            date = LocalDate.parse(args[3]);
         }
         System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %18s %10s %10s %s\n",
                 "code", "cost", "amount", "earning rate", "earning holding", "fixed", "accum", "service fee",

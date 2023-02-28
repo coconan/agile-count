@@ -11,16 +11,8 @@ public class FundDailyRecord {
     private BigDecimal equityReturn;
     private String unitMoney;
 
-    public long getX() {
-        return x;
-    }
-
     public LocalDate getLocalDate() {
-        return Instant.ofEpochMilli(getX()).atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    public BigDecimal getY() {
-        return y;
+        return Instant.ofEpochMilli(x).atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     public BigDecimal getNetUnitValue() {

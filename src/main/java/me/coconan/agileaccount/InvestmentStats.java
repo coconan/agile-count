@@ -56,9 +56,11 @@ public class InvestmentStats {
     }
 
     public BigDecimal getEarningRate() {
-        if (totalCost.equals(BigDecimal.ZERO)) {
+        if (totalCost.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        return getTotalEarning().divide(totalCost, 5, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+
+        return getTotalEarning().divide(totalCost, 5, RoundingMode.HALF_DOWN)
+                .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
     }
 }

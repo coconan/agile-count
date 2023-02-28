@@ -1,9 +1,6 @@
 package me.coconan.agileaccount.command;
 
-import me.coconan.agileaccount.Account;
-import me.coconan.agileaccount.Asset;
-import me.coconan.agileaccount.Fund;
-import me.coconan.agileaccount.Operation;
+import me.coconan.agileaccount.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,14 +20,14 @@ public class OperationCommand implements Command {
 
     @Override
     public void execute() {
-        LocalDate startDate = LocalDate.parse(args[4]);
-        LocalDate endDate = LocalDate.parse(args[5]);
+        LocalDate startDate = LocalDate.parse(args[3]);
+        LocalDate endDate = LocalDate.parse(args[4]);
         String type = "all";
-        if (args.length >= 7 && args[6] != null) {
-            type = args[6];
+        if (args.length >= 6 && args[5] != null) {
+            type = args[5];
         }
-        Map<Fund, List<Operation>> fundOperationsByDateMap = account.getOperationsByDateRange(startDate, endDate);
-        for (Fund fund : fundOperationsByDateMap.keySet()) {
+        Map<InvestmentTarget, List<Operation>> fundOperationsByDateMap = account.getOperationsByDateRange(startDate, endDate);
+        for (InvestmentTarget fund : fundOperationsByDateMap.keySet()) {
             if (fundOperationsByDateMap.get(fund) == null || fundOperationsByDateMap.get(fund).isEmpty()) {
                 continue;
             }

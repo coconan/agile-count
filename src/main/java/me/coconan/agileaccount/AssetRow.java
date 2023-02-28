@@ -81,11 +81,11 @@ public class AssetRow {
         AssetRow assetRow = new AssetRow();
         assetRow.code = asset.getFund().getCode();
         assetRow.name = asset.getFund().getName();
-        assetRow.netPrice = asset.getFund().getLatestFundDailyRecord(date).getNetUnitValue()
+        assetRow.netPrice = asset.getFund().getLatestDailyRecord(date).getClosingPrice()
                 .setScale(4, RoundingMode.HALF_DOWN);
-        assetRow.netPriceLocalDate = asset.getFund().getLatestFundDailyRecord(date).getLocalDate();
+        assetRow.netPriceLocalDate = asset.getFund().getLatestDailyRecord(date).getDate();
         assetRow.cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
-        assetRow.amount = asset.getShare().multiply(asset.getFund().getLatestFundDailyRecord(date).getNetUnitValue())
+        assetRow.amount = asset.getShare().multiply(asset.getFund().getLatestDailyRecord(date).getClosingPrice())
                 .setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earning = assetRow.amount.subtract(assetRow.cost).setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earningRate = assetRow.cost.compareTo(BigDecimal.valueOf(0)) == 0
@@ -96,8 +96,9 @@ public class AssetRow {
         assetRow.fixedEarning = asset.getFixedEarning().setScale(2, RoundingMode.HALF_DOWN);
         assetRow.accumEarning = asset.getFixedEarning().add(assetRow.amount.subtract(assetRow.cost)).setScale(2, RoundingMode.HALF_DOWN);
         assetRow.serviceFee = asset.getServiceFee().setScale(2, RoundingMode.HALF_DOWN);
-        assetRow.weight = asset.getCost().divide(investmentStats.getTotalCost(), 5, RoundingMode.HALF_DOWN)
-                .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+        assetRow.weight = investmentStats.getTotalCost().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO :
+                asset.getCost().divide(investmentStats.getTotalCost(), 5, RoundingMode.HALF_DOWN)
+                        .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
     
         return assetRow;
     }    

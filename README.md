@@ -21,6 +21,7 @@
 - [X] sort assert row by weightings descend
 - [X] display net price with date
 - [X] show total accumulated earnings
+- [X] add support for convertible bond
 
 ## usage
 ```

@@ -15,8 +15,23 @@ import java.util.Objects;
 public class Application {
     
     public static void main(String[] args) {
-        Path operationsDirPath = Paths.get(args[1]);
-        Path fundsPath = Paths.get(args[2]);
+        Path eventsDirPath = Paths.get(args[0]);
+        Path targetsDirPath = Paths.get(args[1]);
+
+        String type = "bonds";
+        Path operationsDirPath = Paths.get(args[0]);
+        Path fundsPath = Paths.get(args[1]);
+        for (File targetsFile : Objects.requireNonNull(targetsDirPath.toFile().listFiles())) {
+            if (targetsFile.getName().contains(type)) {
+                fundsPath = targetsFile.toPath();
+            }
+        }
+        for (File targetEventsDir : Objects.requireNonNull(eventsDirPath.toFile().listFiles())) {
+            if (targetEventsDir.getName().contains(type)) {
+                operationsDirPath = targetEventsDir.toPath();
+            }
+        }
+
         try (FileReader fundsFileReader = new FileReader(fundsPath.toFile())) {
             FundStore fundStore = new FundStore();
             try (BufferedReader reader = new BufferedReader(fundsFileReader)) {
@@ -26,7 +41,11 @@ public class Application {
                     if (fields.length != 3) {
                         continue;
                     }
-                    fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2]));
+                    if (type.equals("funds")) {
+                        fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2]));
+                    } else {
+                        fundStore.put(fields[0].trim(), new ConvertibleBond(fields[0].trim(), fields[2]));
+                    }
                 }
             }
 
@@ -48,11 +67,11 @@ public class Application {
                 }
             }
 
-            if ("asset".equals(args[3])) {
+            if ("asset".equals(args[2])) {
                 new AssetCommand(args, account).execute();
-            } else if ("chart".equals(args[3])) {
+            } else if ("chart".equals(args[2])) {
                 new ChartCommand(args, account).execute();
-            } else if ("operation".equals(args[3])) {
+            } else if ("operation".equals(args[2])) {
                 new OperationCommand(args, account).execute();
             }
 
@@ -61,5 +80,4 @@ public class Application {
             e.printStackTrace();
         }
     }
-
 }

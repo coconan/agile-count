@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.ToString;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -15,7 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class Fund {
+@ToString
+public class Fund implements InvestmentTarget {
     private final String code;
     private final String name;
     private Map<LocalDate, FundDailyRecord> fundDailyRecordMap;
@@ -33,7 +36,18 @@ public class Fund {
         return name;
     }
 
-    public FundDailyRecord getLatestFundDailyRecord(LocalDate date) {
+    @Override
+    public DailyRecord getLatestDailyRecord(LocalDate date) {
+        FundDailyRecord fundDailyRecord = getLatestFundDailyRecord(date);
+
+        return DailyRecord.builder()
+                .investmentTarget(this)
+                .closingPrice(fundDailyRecord.getNetUnitValue())
+                .date(fundDailyRecord.getLocalDate())
+                .build();
+    }
+
+    private FundDailyRecord getLatestFundDailyRecord(LocalDate date) {
         if (fundDailyRecordMap == null) {
             loadFundDailyRecords();
         }
@@ -57,7 +71,7 @@ public class Fund {
                 String netListJson = null;
                 while (true) {
                     Path path = Paths.get(String.format(".fundStore/%s.json", code));
-                    if (path.toFile().exists()) {    
+                    if (path.toFile().exists()) {
                         netListJson = Files.readString(path);
                         if (netListJson != null && !netListJson.isEmpty()) {
                             break;
@@ -66,9 +80,10 @@ public class Fund {
 
                     Thread.sleep(1000);
                 }
-                
+
                 Gson gson = new Gson();
-                List<FundDailyRecord> fundDailyRecords = gson.fromJson(netListJson, new TypeToken<List<FundDailyRecord>>() {}.getType());
+                List<FundDailyRecord> fundDailyRecords = gson.fromJson(netListJson, new TypeToken<List<FundDailyRecord>>() {
+                }.getType());
 
                 fundDailyRecordMap = new HashMap<>();
                 for (FundDailyRecord fundDailyRecord : fundDailyRecords) {

@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FundStore {
-    Map<String, Fund> fundMap = new HashMap<>();
+    Map<String, InvestmentTarget> investmentTargetMap = new HashMap<>();
 
-    public void put(String code, Fund fund) {
-        fundMap.put(code, fund);
+    public void put(String code, InvestmentTarget target) {
+        investmentTargetMap.put(code, target);
     }
 
-    public Fund get(String code) {
-        return fundMap.get(code);
+    public InvestmentTarget get(String code) {
+        return investmentTargetMap.get(code);
     }
 }

@@ -24,14 +24,14 @@ public class ChartCommand implements Command {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         Map<LocalDate, InvestmentStats> investmentStatsByDate = account.getInvestmentStatsByDate();
         String step = "day";
-        if (args.length >= 5 && args[4] != null) {
-            step = args[4];
+        if (args.length >= 4 && args[3] != null) {
+            step = args[3];
         }
         LocalDate start = account.getStartedDate();
         LocalDate end = LocalDate.now();
-        if (args.length == 7 && args[5] != null && args[6] != null) {
-            start = LocalDate.parse(args[5]);
-            end = LocalDate.parse(args[6]);
+        if (args.length == 6 && args[4] != null && args[5] != null) {
+            start = LocalDate.parse(args[4]);
+            end = LocalDate.parse(args[5]);
         }
         System.out.printf("%-10s %16s %16s %16s %16s %16s%% %16s %16s %16s %16s\n",
                 "date", "delta cost", "total cost", "net in/out", "total amount", "earning rate", "holding earning", "fixed earning", "accum earning", "daily earning");

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Asset {
-    private final Fund fund;
+    private final InvestmentTarget fund;
     private BigDecimal share;
     private BigDecimal cost;
     private BigDecimal costPrice;
@@ -12,7 +12,7 @@ public class Asset {
     private BigDecimal fixedEarning;
     private BigDecimal serviceFee;
 
-    public Asset(Fund fund, String platform) {
+    public Asset(InvestmentTarget fund, String platform) {
         this.fund = fund;
         this.platform = platform;
         this.share = BigDecimal.valueOf(0);
@@ -37,7 +37,7 @@ public class Asset {
         share = updatedShare;
     }
 
-    public Fund getFund() {
+    public InvestmentTarget getFund() {
         return fund;
     }
 
