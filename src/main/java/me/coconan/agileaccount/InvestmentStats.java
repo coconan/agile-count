@@ -7,7 +7,6 @@ public class InvestmentStats {
     private BigDecimal totalCost;
     private BigDecimal totalAmount;
     private BigDecimal totalFixedEarning;
-    private BigDecimal totalAccumEarning;
     private BigDecimal totalServiceFee;
 
     public InvestmentStats() {
