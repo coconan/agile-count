@@ -14,7 +14,7 @@
 - [X] support operation type (all/in/out)
 - [X] show operation asset cost price
 - [ ] asset cost price for buy and sell in the same day
-- [ ] add test suite
+- [X] add test suite
 - [ ] support operation add
 - [ ] refactoring with unit test
 - [X] show asset weightings
