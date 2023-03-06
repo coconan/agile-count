@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Application {
@@ -18,22 +19,38 @@ public class Application {
         Path eventsDirPath = Paths.get(args[0]);
         Path targetsDirPath = Paths.get(args[1]);
 
-        String type = "bonds";
-        Path operationsDirPath = Paths.get(args[0]);
-        Path fundsPath = Paths.get(args[1]);
-        for (File targetsFile : Objects.requireNonNull(targetsDirPath.toFile().listFiles())) {
-            if (targetsFile.getName().contains(type)) {
-                fundsPath = targetsFile.toPath();
+        FundStore fundStore = new FundStore();
+        Account account = new Account();
+        for (String type : Arrays.asList("bonds", "funds")) {
+            Path operationsDirPath = Paths.get(args[0]);
+            Path fundsPath = Paths.get(args[1]);
+            for (File targetsFile : Objects.requireNonNull(targetsDirPath.toFile().listFiles())) {
+                if (targetsFile.getName().contains(type)) {
+                    fundsPath = targetsFile.toPath();
+                }
             }
-        }
-        for (File targetEventsDir : Objects.requireNonNull(eventsDirPath.toFile().listFiles())) {
-            if (targetEventsDir.getName().contains(type)) {
-                operationsDirPath = targetEventsDir.toPath();
+            for (File targetEventsDir : Objects.requireNonNull(eventsDirPath.toFile().listFiles())) {
+                if (targetEventsDir.getName().contains(type)) {
+                    operationsDirPath = targetEventsDir.toPath();
+                }
             }
+
+            readData(fundStore, account, type, operationsDirPath, fundsPath);
         }
 
+        if ("asset".equals(args[2])) {
+            new AssetCommand(args, account).execute();
+        } else if ("chart".equals(args[2])) {
+            new ChartCommand(args, account).execute();
+        } else if ("operation".equals(args[2])) {
+            new OperationCommand(args, account).execute();
+        }
+
+        Executor.networkIO().shutdown();
+    }
+
+    private static void readData(FundStore fundStore, Account account, String type, Path operationsDirPath, Path fundsPath) {
         try (FileReader fundsFileReader = new FileReader(fundsPath.toFile())) {
-            FundStore fundStore = new FundStore();
             try (BufferedReader reader = new BufferedReader(fundsFileReader)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -49,7 +66,6 @@ public class Application {
                 }
             }
 
-            Account account = new Account();
             for (File operationsFile : Objects.requireNonNull(operationsDirPath.toFile().listFiles())) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(operationsFile))) {
                     String line;
@@ -62,20 +78,10 @@ public class Application {
                             continue;
                         }
                         account.addOperation(new Operation(fundStore.get(fields[0].trim()), fields[1].trim(), fields[2].trim(),
-                            fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
+                                fields[3].trim(), fields[5].trim(), fields[4].trim(), fields[6].trim(), fields[7].trim()));
                     }
                 }
             }
-
-            if ("asset".equals(args[2])) {
-                new AssetCommand(args, account).execute();
-            } else if ("chart".equals(args[2])) {
-                new ChartCommand(args, account).execute();
-            } else if ("operation".equals(args[2])) {
-                new OperationCommand(args, account).execute();
-            }
-
-            Executor.networkIO().shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         }
