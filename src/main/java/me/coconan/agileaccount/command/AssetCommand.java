@@ -25,7 +25,7 @@ public class AssetCommand implements Command {
     @Override
     public void execute() {
         LocalDate date = LocalDate.now();
-        if (args.length == 4 && args[3] != null) {
+        if (args[3] != null && !args[3].isEmpty()) {
             date = LocalDate.parse(args[3]);
         }
         System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %18s %10s %10s %s\n",
