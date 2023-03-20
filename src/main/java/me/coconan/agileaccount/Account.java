@@ -11,9 +11,11 @@ public class Account {
     private final Map<InvestmentTarget, Map<LocalDate, List<Operation>>> operationByFundMap = new HashMap<>();
     private Map<LocalDate, Map<InvestmentTarget, Asset>> assetByDateMap;
     private LocalDate startedDate;
+    private final String tag;
 
-    public Account() {
+    public Account(String tag) {
         startedDate = LocalDate.now();
+        this.tag = tag;
     }
 
     public LocalDate getStartedDate() {
@@ -21,21 +23,31 @@ public class Account {
     }
     
     public void addOperation(Operation operation) {
+        if (tag != null && (operation.getTags() == null || !operation.getTags().contains(tag))) {
+            return;
+        }
+
         Map<LocalDate, List<Operation>> fundOperationByDateMap =
                 operationByFundMap.computeIfAbsent(operation.getFund(), k -> new HashMap<>());
         LocalDate date = operation.getConfirmedDate();
         if (date.isBefore(startedDate)) {
             startedDate = date;
         }
-        
+
         List<Operation> operationList = fundOperationByDateMap.get(date);
         if (operationList == null) {
             operationList = new ArrayList<>();
         }
         operationList.add(operation);
         fundOperationByDateMap.put(date, operationList);
-        
+
         assetByDateMap = null;
+    }
+
+    public void addAllOperation(List<Operation> operations) {
+        for (Operation operation : operations) {
+            addOperation(operation);
+        }
     }
 
     public List<Asset> getAssets(LocalDate date) {

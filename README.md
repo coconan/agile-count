@@ -22,10 +22,11 @@
 - [X] display net price with date
 - [X] show total accumulated earnings
 - [X] add support for convertible bond
+- [X] add support for account tag
 
 ## usage
 ```
-./run.sh asset 2021-09-30
+./run.sh asset[.grid] [2021-09-30]
 ./run.sh chart week [2022-11-01 2022-11-30]
 ./run.sh operation 2022-11-01 2022-12-01 [all|in|out]
 ```

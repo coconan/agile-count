@@ -12,8 +12,8 @@ public class AssetFixedEarningTest {
     public void test() {
         // give
         Fund fund = new Fund("002121", "广发沪港深新起点股票A");
-        Operation buy = new Operation(fund, "2018-02-01", "2018-02-02", "1000.00", "1000", "1.0000", "0.00", "京东金融");
-        Operation sell = new Operation(fund, "2018-02-02", "2018-02-03", "1100.00", "-1000", "1.1000", "0.00", "京东金融");
+        Operation buy = new Operation(fund, "2018-02-01", "2018-02-02", "1000.00", "1000", "1.0000", "0.00", "京东金融", null);
+        Operation sell = new Operation(fund, "2018-02-02", "2018-02-03", "1100.00", "-1000", "1.1000", "0.00", "京东金融", null);
         Asset asset = new Asset(fund, "京东金融");
         asset.apply(buy);
         asset.apply(sell);

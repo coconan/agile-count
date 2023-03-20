@@ -2,6 +2,7 @@ package me.coconan.agileaccount;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Map;
 
 public class ChartRow {
@@ -44,9 +45,12 @@ public class ChartRow {
         }
         InvestmentStats investmentStatsThisDate = investmentStatsByDate.get(date);
         int count = 1;
-        while (investmentStatsThisDate == null) {
+        while (investmentStatsThisDate == null && date.isAfter(investmentStatsByDate.keySet().stream().min(Comparator.naturalOrder()).get())) {
             investmentStatsThisDate = investmentStatsByDate.get(date.minusDays(count));
             count += 1;
+        }
+        if (investmentStatsThisDate == null) {
+            investmentStatsThisDate = new InvestmentStats();
         }
         ChartRow chartRow = new ChartRow();
         chartRow.date = date;

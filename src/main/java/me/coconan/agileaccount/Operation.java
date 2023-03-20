@@ -12,8 +12,9 @@ public class Operation {
     private final BigDecimal netUnitValue;
     private final BigDecimal serviceFee;
     private final String platform;
+    private final String tags;
     
-    public Operation(InvestmentTarget fund, String submittedDate, String confirmedDate, String cost, String share, String netUnitValue, String serviceFee, String platform) {
+    public Operation(InvestmentTarget fund, String submittedDate, String confirmedDate, String cost, String share, String netUnitValue, String serviceFee, String platform, String tags) {
         this.fund = fund;
         this.submittedDate = LocalDate.parse(submittedDate);
         this.confirmedDate = LocalDate.parse(confirmedDate);
@@ -22,6 +23,7 @@ public class Operation {
         this.netUnitValue = new BigDecimal(netUnitValue);
         this.serviceFee = new BigDecimal(serviceFee);
         this.platform = platform;
+        this.tags = tags;
     }
 
     public InvestmentTarget getFund() {
@@ -50,6 +52,10 @@ public class Operation {
 
     public BigDecimal getCost() {
         return cost;
+    }
+
+    public String getTags() {
+        return tags;
     }
 
     @Override
