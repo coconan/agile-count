@@ -23,6 +23,7 @@
 - [X] show total accumulated earnings
 - [X] add support for convertible bond
 - [X] add support for account tag
+- [ ] sort by code/weight 
 
 ## usage
 ```

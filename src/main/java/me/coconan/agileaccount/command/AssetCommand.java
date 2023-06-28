@@ -25,8 +25,17 @@ public class AssetCommand implements Command {
     @Override
     public void execute() {
         LocalDate date = LocalDate.now();
+        String orderBy = "weight";
         if (args[3] != null && !args[3].isEmpty()) {
-            date = LocalDate.parse(args[3]);
+            if (args[3].equals("-s")) {
+                if (args[4].equals("weight")) {
+                    orderBy = "weight";
+                } else {
+                    orderBy = "code";
+                }
+            } else {
+                date = LocalDate.parse(args[3]);
+            }
         }
         System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %18s %10s %10s %s\n",
                 "code", "cost", "amount", "earning rate", "earning holding", "fixed", "accum", "service fee",
@@ -41,7 +50,11 @@ public class AssetCommand implements Command {
             AssetRow assetRow = AssetRow.build(asset, investmentStats, date);
             assetRows.add(assetRow);
         }
-        assetRows.sort((row1, row2) -> row2.getCost().compareTo(row1.getCost()));
+        if (orderBy.equals("weight")) {
+            assetRows.sort((row1, row2) -> row2.getCost().compareTo(row1.getCost()));
+        } else {
+            assetRows.sort(Comparator.comparing(AssetRow::getCode));
+        }
         for (AssetRow assetRow : assetRows) {
             System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %10s [%s] %10s %10s %s\n",
                     assetRow.getCode(), assetRow.getCost(), assetRow.getAmount(), assetRow.getEarningRate(),
