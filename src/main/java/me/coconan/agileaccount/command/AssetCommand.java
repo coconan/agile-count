@@ -37,9 +37,9 @@ public class AssetCommand implements Command {
                 date = LocalDate.parse(args[3]);
             }
         }
-        System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %18s %10s %10s %s\n",
+        System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %10s%% %18s %10s %10s %s\n",
                 "code", "cost", "amount", "earning rate", "earning holding", "fixed", "accum", "service fee",
-                "weight", "net price [ date]", "cost price", "share", "name");
+                "weight", "hold", "net price [ date]", "cost price", "share", "name");
         List<Asset> assets = account.getAssets(date);
         InvestmentStats investmentStats = account.getInvestmentStats(assets, date);
         List<AssetRow> assetRows = new ArrayList<>();
@@ -56,15 +56,15 @@ public class AssetCommand implements Command {
             assetRows.sort(Comparator.comparing(AssetRow::getCode));
         }
         for (AssetRow assetRow : assetRows) {
-            System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %10s [%s] %10s %10s %s\n",
+            System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s%% %10s%% %10s [%s] %10s %10s %s\n",
                     assetRow.getCode(), assetRow.getCost(), assetRow.getAmount(), assetRow.getEarningRate(),
                     assetRow.getEarning(), assetRow.getFixedEarning(), assetRow.getAccumEarning(),
-                    assetRow.getServiceFee(), assetRow.getWeight(), assetRow.getNetPrice(),
+                    assetRow.getServiceFee(), assetRow.getWeight(), assetRow.getHold(), assetRow.getNetPrice(),
                     assetRow.getNetPriceLocalDate().format(DateTimeFormatter.ofPattern("MM-dd")),
                     assetRow.getCostPrice(), assetRow.getShare(), assetRow.getName());
         }
 
-        System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s %10s %10s %10s %s\n",
+        System.out.printf("%6s %10s %10s %16s%% %16s %16s %16s %16s %10s %10s %10s %10s %10s %s\n",
             " ",
             investmentStats.getTotalCost().setScale(2, RoundingMode.HALF_DOWN),
             investmentStats.getTotalAmount().setScale(2, RoundingMode.HALF_DOWN),
@@ -73,6 +73,6 @@ public class AssetCommand implements Command {
             investmentStats.getTotalFixedEarning().setScale(2, RoundingMode.HALF_DOWN),
             investmentStats.getTotalAccumEarning().setScale(2, RoundingMode.HALF_DOWN),
             investmentStats.getTotalServiceFee().setScale(2, RoundingMode.HALF_DOWN),
-            "", "", "", "", " ");
+            "", "", "", "", "", " ");
     }
 }

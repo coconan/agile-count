@@ -20,6 +20,7 @@ public class AssetRow {
     private BigDecimal accumEarning;
     private BigDecimal serviceFee;
     private BigDecimal weight;
+    private BigDecimal hold;
 
     public String getCode() {
         return code;
@@ -77,6 +78,10 @@ public class AssetRow {
         return weight;
     }
 
+    public BigDecimal getHold() {
+        return hold;
+    }
+
     public static AssetRow build(Asset asset, InvestmentStats investmentStats, LocalDate date) {
         AssetRow assetRow = new AssetRow();
         assetRow.code = asset.getFund().getCode();
@@ -99,7 +104,10 @@ public class AssetRow {
         assetRow.weight = investmentStats.getTotalCost().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO :
                 asset.getCost().divide(investmentStats.getTotalCost(), 5, RoundingMode.HALF_DOWN)
                         .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
-    
+        assetRow.hold = investmentStats.getTotalAmount().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO :
+                assetRow.amount.divide(investmentStats.getTotalAmount(), 5, RoundingMode.HALF_DOWN)
+                        .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
+
         return assetRow;
     }    
 }
