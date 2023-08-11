@@ -25,6 +25,8 @@
 - [X] add support for account tag
 - [X] sort by code/weight 
 - [X] show asset holds
+- [ ] support multiple accounts
+- [ ] show asset allocation
 
 ## usage
 ```
