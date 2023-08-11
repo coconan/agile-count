@@ -84,13 +84,13 @@ public class AssetRow {
 
     public static AssetRow build(Asset asset, InvestmentStats investmentStats, LocalDate date) {
         AssetRow assetRow = new AssetRow();
-        assetRow.code = asset.getFund().getCode();
-        assetRow.name = asset.getFund().getName();
-        assetRow.netPrice = asset.getFund().getLatestDailyRecord(date).getClosingPrice()
+        assetRow.code = asset.getInvestmentTarget().getCode();
+        assetRow.name = asset.getInvestmentTarget().getName();
+        assetRow.netPrice = asset.getInvestmentTarget().getLatestDailyRecord(date).getClosingPrice()
                 .setScale(4, RoundingMode.HALF_DOWN);
-        assetRow.netPriceLocalDate = asset.getFund().getLatestDailyRecord(date).getDate();
+        assetRow.netPriceLocalDate = asset.getInvestmentTarget().getLatestDailyRecord(date).getDate();
         assetRow.cost = asset.getCost().setScale(2, RoundingMode.HALF_DOWN);
-        assetRow.amount = asset.getShare().multiply(asset.getFund().getLatestDailyRecord(date).getClosingPrice())
+        assetRow.amount = asset.getShare().multiply(asset.getInvestmentTarget().getLatestDailyRecord(date).getClosingPrice())
                 .setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earning = assetRow.amount.subtract(assetRow.cost).setScale(2, RoundingMode.HALF_DOWN);
         assetRow.earningRate = assetRow.cost.compareTo(BigDecimal.valueOf(0)) == 0

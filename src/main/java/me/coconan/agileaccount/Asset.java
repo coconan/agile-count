@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Asset {
-    private final InvestmentTarget fund;
+    private final InvestmentTarget investmentTarget;
     private BigDecimal share;
     private BigDecimal cost;
     private BigDecimal costPrice;
@@ -12,8 +12,8 @@ public class Asset {
     private BigDecimal fixedEarning;
     private BigDecimal serviceFee;
 
-    public Asset(InvestmentTarget fund, String platform) {
-        this.fund = fund;
+    public Asset(InvestmentTarget investmentTarget, String platform) {
+        this.investmentTarget = investmentTarget;
         this.platform = platform;
         this.share = BigDecimal.valueOf(0);
         this.cost = BigDecimal.valueOf(0);
@@ -37,8 +37,8 @@ public class Asset {
         share = updatedShare;
     }
 
-    public InvestmentTarget getFund() {
-        return fund;
+    public InvestmentTarget getInvestmentTarget() {
+        return investmentTarget;
     }
 
     public BigDecimal getShare() {
@@ -62,7 +62,7 @@ public class Asset {
     }
 
     public Asset copy() {
-        Asset newAsset = new Asset(fund, platform);
+        Asset newAsset = new Asset(investmentTarget, platform);
         newAsset.share = this.share;
         newAsset.cost = this.cost;
         newAsset.costPrice = this.costPrice;
@@ -83,7 +83,7 @@ public class Asset {
     @Override
     public String toString() {
         return "Asset{" +
-                "fund=" + fund +
+                "investmentTarget=" + investmentTarget.getName() +
                 ", share=" + share +
                 ", cost=" + cost +
                 ", costPrice=" + costPrice +

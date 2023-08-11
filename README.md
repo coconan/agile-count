@@ -26,11 +26,12 @@
 - [X] sort by code/weight 
 - [X] show asset holds
 - [ ] support multiple accounts
-- [ ] show asset allocation
+- [X] support asset allocation
 
 ## usage
 ```
-./run.sh asset[.grid] [2021-09-30]
+./run.sh asset[.grid] [-s [weight|code]] [2021-09-30]
 ./run.sh chart week [2022-11-01 2022-11-30]
 ./run.sh operation 2022-11-01 2022-12-01 [all|in|out]
+./run.sh allocation [-s [weight|hold]] [2023-08-11]
 ```

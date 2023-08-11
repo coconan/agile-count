@@ -21,11 +21,13 @@ import java.util.Objects;
 public class Fund implements InvestmentTarget {
     private final String code;
     private final String name;
+    private final Allocation allocation;
     private Map<LocalDate, FundDailyRecord> fundDailyRecordMap;
 
-    public Fund(String code, String name) {
+    public Fund(String code, String name, Allocation allocation) {
         this.code = code;
         this.name = name;
+        this.allocation = allocation;
     }
 
     public String getCode() {
@@ -34,6 +36,10 @@ public class Fund implements InvestmentTarget {
 
     public String getName() {
         return name;
+    }
+
+    public Allocation getAllocation() {
+        return allocation;
     }
 
     @Override

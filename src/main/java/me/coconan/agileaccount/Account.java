@@ -56,7 +56,7 @@ public class Account {
           return new ArrayList<>();
         }
         List<Asset> assetCollection = new ArrayList<>(assetByDateMap.get(date).values());
-        assetCollection.sort(Comparator.comparing(asset -> asset.getFund().getCode()));
+        assetCollection.sort(Comparator.comparing(asset -> asset.getInvestmentTarget().getCode()));
         
         return assetCollection;
     }
@@ -154,7 +154,7 @@ public class Account {
     private BigDecimal calculateTotalAmount(Collection<Asset> assets, LocalDate date) {
         BigDecimal totalAmount = new BigDecimal(0);
         for (Asset asset : assets) {
-            DailyRecord dailyRecord = asset.getFund().getLatestDailyRecord(date);
+            DailyRecord dailyRecord = asset.getInvestmentTarget().getLatestDailyRecord(date);
             BigDecimal amount = asset.getShare().multiply(dailyRecord.getClosingPrice());
             totalAmount = totalAmount.add(amount);
         }

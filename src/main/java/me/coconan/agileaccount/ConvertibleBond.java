@@ -31,4 +31,9 @@ public class ConvertibleBond implements InvestmentTarget {
                 .closingPrice(new BigDecimal(100))
                 .build();
     }
+
+    @Override
+    public Allocation getAllocation() {
+        return new Allocation("可转债");
+    }
 }

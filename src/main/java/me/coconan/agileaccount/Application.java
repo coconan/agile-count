@@ -1,5 +1,6 @@
 package me.coconan.agileaccount;
 
+import me.coconan.agileaccount.command.AllocationCommand;
 import me.coconan.agileaccount.command.AssetCommand;
 import me.coconan.agileaccount.command.ChartCommand;
 import me.coconan.agileaccount.command.OperationCommand;
@@ -50,6 +51,8 @@ public class Application {
             new ChartCommand(args, account).execute();
         } else if (args[2].contains("operation")) {
             new OperationCommand(args, account).execute();
+        } else if (args[2].contains("allocation")) {
+            new AllocationCommand(args, account).execute();
         }
 
         Executor.networkIO().shutdown();
@@ -62,12 +65,15 @@ public class Application {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] fields = line.split("\\s+");
-                    if (fields.length != 3) {
-                        continue;
-                    }
                     if (type.equals("funds")) {
-                        fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2]));
+                        if (fields.length != 4) {
+                            continue;
+                        }
+                        fundStore.put(fields[0].trim(), new Fund(fields[0].trim(), fields[2], new Allocation(fields[3].trim())));
                     } else {
+                        if (fields.length != 3) {
+                            continue;
+                        }
                         fundStore.put(fields[0].trim(), new ConvertibleBond(fields[0].trim(), fields[2]));
                     }
                 }

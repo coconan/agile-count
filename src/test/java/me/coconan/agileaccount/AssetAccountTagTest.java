@@ -15,7 +15,7 @@ public class AssetAccountTagTest {
 
         // give
         Account account = new Account("grid");
-        Fund fund = new Fund("002121", "广发沪港深新起点股票A");
+        Fund fund = new Fund("002121", "广发沪港深新起点股票A", new Allocation("主动"));
         Operation buyGrid = new Operation(fund, "2018-02-01", "2018-02-02", "1000.00", "1000", "1.0000", "0.00", "京东金融", "grid");
         Operation buy = new Operation(fund, "2018-02-01", "2018-02-02", "1000.00", "1000", "1.0000", "0.00", "京东金融", null);
         account.addOperation(buyGrid);
