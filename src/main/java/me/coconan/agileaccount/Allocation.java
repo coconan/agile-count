@@ -1,15 +1,15 @@
+/* CoconanBY (C)2024 */
 package me.coconan.agileaccount;
 
+import lombok.Getter;
+
+@Getter
 public class Allocation {
-    private String name;
+    private final String name;
 
     public Allocation(String name) {
         assert name != null;
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

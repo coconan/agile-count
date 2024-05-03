@@ -1,4 +1,4 @@
-/* (C)2024 */
+/* CoconanBY (C)2024 */
 package me.coconan.agileaccount.command;
 
 import java.math.RoundingMode;

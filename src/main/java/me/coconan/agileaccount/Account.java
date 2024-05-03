@@ -1,16 +1,18 @@
+/* CoconanBY (C)2024 */
 package me.coconan.agileaccount;
-
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import lombok.Getter;
+import lombok.ToString;
 
 @ToString
 public class Account {
-    private final Map<InvestmentTarget, Map<LocalDate, List<Operation>>> operationByFundMap = new HashMap<>();
+    private final Map<InvestmentTarget, Map<LocalDate, List<Operation>>> operationByFundMap =
+            new HashMap<>();
     private Map<LocalDate, Map<InvestmentTarget, Asset>> assetByDateMap;
-    private LocalDate startedDate;
+    @Getter private LocalDate startedDate;
     private final String tag;
 
     public Account(String tag) {
@@ -18,10 +20,6 @@ public class Account {
         this.tag = tag;
     }
 
-    public LocalDate getStartedDate() {
-        return startedDate;
-    }
-    
     public void addOperation(Operation operation) {
         if (tag != null && (operation.getTags() == null || !operation.getTags().contains(tag))) {
             return;
@@ -53,20 +51,20 @@ public class Account {
     public List<Asset> getAssets(LocalDate date) {
         Map<LocalDate, Map<InvestmentTarget, Asset>> assetByDateMap = buildAssetByDateMap();
         if (assetByDateMap.get(date) == null) {
-          return new ArrayList<>();
+            return new ArrayList<>();
         }
         List<Asset> assetCollection = new ArrayList<>(assetByDateMap.get(date).values());
         assetCollection.sort(Comparator.comparing(asset -> asset.getInvestmentTarget().getCode()));
-        
+
         return assetCollection;
     }
 
     public Asset getAsset(InvestmentTarget fund, LocalDate date) {
         Map<LocalDate, Map<InvestmentTarget, Asset>> assetByDateMap = buildAssetByDateMap();
         if (assetByDateMap.get(date) == null) {
-          return null;
+            return null;
         }
-        
+
         return assetByDateMap.get(date).get(fund);
     }
 
@@ -82,11 +80,11 @@ public class Account {
 
     public Map<LocalDate, InvestmentStats> getInvestmentStatsByDate() {
         Map<LocalDate, InvestmentStats> investmentStatsByDate = new HashMap<>();
-        
+
         Map<LocalDate, Map<InvestmentTarget, Asset>> assetByDateMap = buildAssetByDateMap();
         for (LocalDate date = getStartedDate();
-            date.isBefore(LocalDate.now().plusDays(1));
-            date = date.plusDays(1)) {
+                date.isBefore(LocalDate.now().plusDays(1));
+                date = date.plusDays(1)) {
             Map<InvestmentTarget, Asset> assetMapThisDate = assetByDateMap.get(date);
             if (assetMapThisDate == null) {
                 assetMapThisDate = new HashMap<>();
@@ -98,12 +96,16 @@ public class Account {
         return investmentStatsByDate;
     }
 
-    public Map<InvestmentTarget, List<Operation>> getOperationsByDateRange(LocalDate startedDate, LocalDate endDate) {
+    public Map<InvestmentTarget, List<Operation>> getOperationsByDateRange(
+            LocalDate startedDate, LocalDate endDate) {
         Map<InvestmentTarget, List<Operation>> fundOperationsMap = new HashMap<>();
         for (InvestmentTarget fund : operationByFundMap.keySet()) {
             List<Operation> operations = new ArrayList<>();
-            for (LocalDate date = startedDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
-                if (operationByFundMap.get(fund) != null && operationByFundMap.get(fund).get(date) != null) {
+            for (LocalDate date = startedDate;
+                    date.isBefore(endDate.plusDays(1));
+                    date = date.plusDays(1)) {
+                if (operationByFundMap.get(fund) != null
+                        && operationByFundMap.get(fund).get(date) != null) {
                     operations.addAll(operationByFundMap.get(fund).get(date));
                 }
             }
@@ -118,7 +120,9 @@ public class Account {
             return assetByDateMap;
         }
         assetByDateMap = new HashMap<>();
-        for (LocalDate date = getStartedDate(); date.isBefore(LocalDate.now().plusDays(1)); date = date.plusDays(1)) {
+        for (LocalDate date = getStartedDate();
+                date.isBefore(LocalDate.now().plusDays(1));
+                date = date.plusDays(1)) {
             Map<InvestmentTarget, Asset> assetMapLastDate = assetByDateMap.get(date.minusDays(1));
             if (assetMapLastDate == null) {
                 assetMapLastDate = new HashMap<>();
@@ -147,7 +151,7 @@ public class Account {
         for (Operation operation : operations) {
             newAsset.apply(operation);
         }
-        
+
         return newAsset;
     }
 
@@ -158,7 +162,7 @@ public class Account {
             BigDecimal amount = asset.getShare().multiply(dailyRecord.getClosingPrice());
             totalAmount = totalAmount.add(amount);
         }
-        
+
         return totalAmount;
     }
 
@@ -167,7 +171,7 @@ public class Account {
         for (Asset asset : assets) {
             totalCost = totalCost.add(asset.getCost());
         }
-        
+
         return totalCost;
     }
 
@@ -176,7 +180,7 @@ public class Account {
         for (Asset asset : assets) {
             totalFixedEarning = totalFixedEarning.add(asset.getFixedEarning());
         }
-        
+
         return totalFixedEarning;
     }
 
