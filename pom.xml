@@ -59,6 +59,42 @@
                     <target>11</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <ratchetFrom>origin/master</ratchetFrom>
+                    <formats>
+                        <format>
+                            <!-- define the files to apply to -->
+                            <includes>
+                                <include>.gitattributes</include>
+                                <include>.gitignore</include>
+                            </includes>
+                            <!-- define the steps to apply to those files -->
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <tabs>true</tabs>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.17.0</version>
+                            <style>AOSP</style>
+                            <reflowLongStrings>true</reflowLongStrings>
+                            <formatJavadoc>false</formatJavadoc>
+                        </googleJavaFormat>
+
+                        <licenseHeader>
+                            <content>/* CoconanBY (C)$YEAR */</content>
+                        </licenseHeader>
+                    </java>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -67,5 +103,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <java.version>8</java.version>
+        <spotless.version>2.43.0</spotless.version>
     </properties>
 </project>
